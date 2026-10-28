@@ -46,6 +46,16 @@ export interface UserSummary {
   campusVerificationStatus: CampusVerificationStatus;
   studentId?: string;
   phoneNumber?: string;
+  whatsappNumber?: string;
+  campusLocation?: string;
+  contactNote?: string;
+}
+
+export interface UpdateContactDetailsInput {
+  phoneNumber?: string;
+  whatsappNumber?: string;
+  campusLocation?: string;
+  contactNote?: string;
 }
 
 export interface UserProfile extends UserSummary {
@@ -161,6 +171,9 @@ export interface HandoverContact {
   name: string;
   email: string;
   phoneNumber?: string;
+  whatsappNumber?: string;
+  campusLocation?: string;
+  contactNote?: string;
   role: Role;
   conversationId?: number;
   campusHandoverGuide?: string;

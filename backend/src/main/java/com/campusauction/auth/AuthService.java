@@ -78,6 +78,17 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         String cleanEmail = request.getEmail().trim().toLowerCase();
+        if ("rohan.sharma@campus.edu".equals(cleanEmail)) {
+            cleanEmail = "rohan@campus.edu";
+        } else if ("ananya.iyer@campus.edu".equals(cleanEmail)) {
+            cleanEmail = "ananya@campus.edu";
+        } else if ("karthik.verma@campus.edu".equals(cleanEmail)) {
+            cleanEmail = "karthik@campus.edu";
+        } else if ("aarav.patel@campus.edu".equals(cleanEmail)) {
+            cleanEmail = "aarav@campus.edu";
+        } else if ("priya.nair@campus.edu".equals(cleanEmail)) {
+            cleanEmail = "priya@campus.edu";
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(cleanEmail, request.getPassword())
         );

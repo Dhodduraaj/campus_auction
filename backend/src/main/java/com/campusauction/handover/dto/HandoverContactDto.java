@@ -15,6 +15,9 @@ public class HandoverContactDto {
     private String name;
     private String email;
     private String phoneNumber;
+    private String whatsappNumber;
+    private String campusLocation;
+    private String contactNote;
     private Role role;
     private Long conversationId;
     private String campusHandoverGuide;

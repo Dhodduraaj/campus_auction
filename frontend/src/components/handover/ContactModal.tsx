@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HandoverContact } from '../../types';
 import { handoverService } from '../../services/handoverService';
-import { X, Mail, Phone, ShieldCheck, MessageSquare, Loader2, UserCheck } from 'lucide-react';
+import { X, Mail, Phone, ShieldCheck, MessageSquare, Loader2, UserCheck, MapPin, MessageCircle, FileText } from 'lucide-react';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -91,19 +91,68 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                   {contact.name}
                 </div>
 
+                {/* Email */}
                 <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                   <Mail className="w-4 h-4 text-orange-500 shrink-0" />
-                  <a href={`mailto:${contact.email}`} className="hover:underline font-mono text-xs">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Email:</span>
+                  <a href={`mailto:${contact.email}`} className="hover:underline font-mono text-xs text-slate-800 dark:text-slate-200">
                     {contact.email}
                   </a>
                 </div>
 
+                {/* Mobile Number */}
                 {contact.phoneNumber && contact.phoneNumber !== 'Not provided' && (
                   <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                     <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <a href={`tel:${contact.phoneNumber}`} className="hover:underline font-mono text-xs">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Mobile:</span>
+                    <a href={`tel:${contact.phoneNumber}`} className="hover:underline font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                       {contact.phoneNumber}
                     </a>
+                  </div>
+                )}
+
+                {/* WhatsApp */}
+                {contact.whatsappNumber && (
+                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                    <MessageCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">WhatsApp:</span>
+                    <a
+                      href={`https://wa.me/${contact.whatsappNumber.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1"
+                    >
+                      {contact.whatsappNumber}
+                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded font-sans">
+                        Chat
+                      </span>
+                    </a>
+                  </div>
+                )}
+
+                {/* Campus Location / Hostel */}
+                {contact.campusLocation && (
+                  <div className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                    <MapPin className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">Campus Location / Hostel:</span>
+                      <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
+                        {contact.campusLocation}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Contact / Handover Note */}
+                {contact.contactNote && (
+                  <div className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                    <FileText className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">Handover Notes / Availability:</span>
+                      <span className="text-xs text-slate-600 dark:text-slate-300 italic">
+                        "{contact.contactNote}"
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>

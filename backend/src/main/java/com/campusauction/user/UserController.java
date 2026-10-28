@@ -38,6 +38,16 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(profile));
     }
 
+    @PutMapping("/contact")
+    @Operation(summary = "Update contact details (mobile, WhatsApp, campus location, notes)")
+    public ResponseEntity<ApiResponse<UserProfileDto>> updateContactDetails(
+            @jakarta.validation.Valid @RequestBody com.campusauction.user.dto.UpdateContactDetailsRequest request
+    ) {
+        User user = authService.getCurrentAuthenticatedUser();
+        UserProfileDto updatedProfile = userService.updateContactDetails(user.getId(), request);
+        return ResponseEntity.ok(ApiResponse.success("Contact details updated successfully", updatedProfile));
+    }
+
     @GetMapping("/listings")
     @Operation(summary = "Get all listings created by the authenticated student with optional status tab")
     public ResponseEntity<ApiResponse<PagedResponse<ListingCardDto>>> getMyListings(

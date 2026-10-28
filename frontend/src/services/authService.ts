@@ -1,5 +1,5 @@
 import { apiRequest, setAuthToken, removeAuthToken } from './apiClient';
-import { AuthResponse, UserProfile, UserSummary } from '../types';
+import { AuthResponse, UserProfile, UserSummary, UpdateContactDetailsInput } from '../types';
 
 export interface RegisterPayload {
   name: string;
@@ -40,6 +40,13 @@ export const authService = {
 
   async getProfile(): Promise<UserProfile> {
     return apiRequest<UserProfile>('/api/users/me/profile');
+  },
+
+  async updateContactDetails(payload: UpdateContactDetailsInput): Promise<UserProfile> {
+    return apiRequest<UserProfile>('/api/users/me/contact', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
   },
 
   logout(): void {

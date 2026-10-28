@@ -21,6 +21,9 @@ public class UserProfileDto {
     private CampusVerificationStatus campusVerificationStatus;
     private String studentId;
     private String phoneNumber;
+    private String whatsappNumber;
+    private String campusLocation;
+    private String contactNote;
     private OffsetDateTime createdAt;
     private long totalListingsCount;
     private long activeListingsCount;

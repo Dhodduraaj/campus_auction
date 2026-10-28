@@ -63,7 +63,7 @@ Verified student registration, login, first-bid rule, increment enforcement, sel
 Frontend Production Build:
 ✓ built in 941ms with strict TypeScript checks passing without warnings.
 Browser Journey:
-Navigated the marketplace, filtered categories, logged in as junior student Karthik Verma, submitted a live bid of $550.00 on the Casio Scientific Calculator, and confirmed the live bid history update and student profile statistics.
+Navigated the marketplace, filtered categories, logged in as junior student Karthik, submitted a live bid of $550.00 on the Casio Scientific Calculator, and confirmed the live bid history update and student profile statistics.
 🚀 Running the Platform Locally
 PostgreSQL Database:
 
@@ -85,9 +85,9 @@ npm run dev
 Running at: http://localhost:5180
 Pre-Seeded Demo Accounts:
 
-Senior Seller (Cycles, Books): rohan.sharma@campus.edu / password123
-Senior Seller (Calculators, Lab Kits): ananya.iyer@campus.edu / password123
-Junior Bidder: karthik.verma@campus.edu / password123 (1-Click Fill buttons are available on the Sign In page for quick testing).
+Senior Seller (Cycles, Books): rohan@campus.edu / password123
+Senior Seller (Calculators, Lab Kits): ananya@campus.edu / password123
+Junior Bidder: karthik@campus.edu / password123 (1-Click Fill buttons are available on the Sign In page for quick testing).
 9:47 AM
 now inside the project_docs folder create visualization diagrams of the project such as database digram, workflow, ER diagram, architectural diagram
 10:39 AM
@@ -384,8 +384,8 @@ Starting price (₹) & Min. bid increment (₹)
 Verification Check	Result	Details
 Backend Unit & Integration Tests	PASS	mvnw.cmd test ran 4 tests, 0 failures, 0 errors (BUILD SUCCESS).
 Frontend Production Build	PASS	npm run build compiled 2042 modules in 865ms with zero errors.
-Junior Registration & Role Persistence	VERIFIED	Registered aarav.patel@campus.edu with JUNIOR role, stored in PostgreSQL.
-Senior Registration & Role Persistence	VERIFIED	Registered priya.nair@campus.edu with SENIOR role, stored in PostgreSQL.
+Junior Registration & Role Persistence	VERIFIED	Registered aarav@campus.edu with JUNIOR role, stored in PostgreSQL.
+Senior Registration & Role Persistence	VERIFIED	Registered priya@campus.edu with SENIOR role, stored in PostgreSQL.
 Arbitrary Role Registration Block	VERIFIED	Registration with ADMIN rejected with HTTP 400 Bad Request.
 Junior Listing Attempt Block	VERIFIED	Junior attempting POST to /api/listings rejected with HTTP 403 Forbidden.
 Senior Bidding Attempt Block	VERIFIED	Senior attempting POST to /api/listings/{id}/bids rejected with HTTP 403 Forbidden.

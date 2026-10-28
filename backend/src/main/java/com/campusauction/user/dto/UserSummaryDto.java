@@ -20,6 +20,9 @@ public class UserSummaryDto {
     private CampusVerificationStatus campusVerificationStatus;
     private String studentId;
     private String phoneNumber;
+    private String whatsappNumber;
+    private String campusLocation;
+    private String contactNote;
 
     public static UserSummaryDto fromEntity(User user) {
         if (user == null) return null;
@@ -31,6 +34,9 @@ public class UserSummaryDto {
                 .campusVerificationStatus(user.getCampusVerificationStatus())
                 .studentId(user.getStudentId())
                 .phoneNumber(user.getPhoneNumber())
+                .whatsappNumber(user.getWhatsappNumber())
+                .campusLocation(user.getCampusLocation())
+                .contactNote(user.getContactNote())
                 .build();
     }
 }

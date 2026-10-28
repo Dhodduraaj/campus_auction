@@ -43,33 +43,42 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // 1. Seed demo student accounts
         User senior1 = User.builder()
-                .name("Rohan Sharma")
-                .email("rohan.sharma@campus.edu")
+                .name("Rohan")
+                .email("rohan@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
                 .role(Role.SENIOR)
                 .studentId("SEN-2022-CS-041")
                 .phoneNumber("+91 98765 43210")
+                .whatsappNumber("+91 98765 43210")
+                .campusLocation("Hostel Block A, Room 204")
+                .contactNote("Available for handoffs after 4:30 PM near Central Library")
                 .build();
 
         User senior2 = User.builder()
-                .name("Ananya Iyer")
-                .email("ananya.iyer@campus.edu")
+                .name("Ananya")
+                .email("ananya@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
                 .role(Role.SENIOR)
                 .studentId("SEN-2022-EE-019")
                 .phoneNumber("+91 98765 43211")
+                .whatsappNumber("+91 98765 43211")
+                .campusLocation("Hostel Block C, Room 112")
+                .contactNote("Available in EE Department block or Student Activity Center")
                 .build();
 
         User junior1 = User.builder()
-                .name("Karthik Verma")
-                .email("karthik.verma@campus.edu")
+                .name("Karthik")
+                .email("karthik@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
                 .role(Role.JUNIOR)
                 .studentId("JUN-2024-ME-085")
                 .phoneNumber("+91 98765 43212")
+                .whatsappNumber("+91 98765 43212")
+                .campusLocation("Hostel Block B, Room 305")
+                .contactNote("Ping on WhatsApp for quick coordination")
                 .build();
 
         userRepository.saveAll(List.of(senior1, senior2, junior1));

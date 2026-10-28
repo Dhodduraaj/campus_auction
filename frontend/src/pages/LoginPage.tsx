@@ -72,7 +72,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
           <div className="grid grid-cols-2 gap-2 text-xs font-mono">
             <button
               type="button"
-              onClick={() => handleQuickLogin('rohan.sharma@campus.edu')}
+              onClick={() => handleQuickLogin('rohan@campus.edu')}
               className="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-left hover:border-orange-500 transition-colors"
             >
               <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">
@@ -84,7 +84,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
             </button>
             <button
               type="button"
-              onClick={() => handleQuickLogin('karthik.verma@campus.edu')}
+              onClick={() => handleQuickLogin('karthik@campus.edu')}
               className="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-left hover:border-orange-500 transition-colors"
             >
               <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">

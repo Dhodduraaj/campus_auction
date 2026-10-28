@@ -47,6 +47,15 @@ public class User {
     @Column(name = "phone_number", length = 30)
     private String phoneNumber;
 
+    @Column(name = "whatsapp_number", length = 30)
+    private String whatsappNumber;
+
+    @Column(name = "campus_location", length = 150)
+    private String campusLocation;
+
+    @Column(name = "contact_note", length = 255)
+    private String contactNote;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;

@@ -134,9 +134,9 @@ Pre-seeded with active listings and bids for instant evaluation:
 
 | Role | Name | Email | Password |
 |---|---|---|---|
-| **Senior Seller** | Rohan Sharma | `rohan.sharma@campus.edu` | `password123` |
-| **Senior Seller** | Ananya Iyer | `ananya.iyer@campus.edu` | `password123` |
-| **Junior Bidder** | Karthik Verma | `karthik.verma@campus.edu` | `password123` |
+| **Senior Seller** | Rohan | `rohan@campus.edu` | `password123` |
+| **Senior Seller** | Ananya | `ananya@campus.edu` | `password123` |
+| **Junior Bidder** | Karthik | `karthik@campus.edu` | `password123` |
 
 *(Use the 1-Click Fill buttons on the Sign In page for rapid switching between seller and bidder roles).*
 
