@@ -2,6 +2,7 @@ package com.campusauction.listing;
 
 import com.campusauction.common.exception.BadRequestException;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +19,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class FileStorageService {
 
     private static final Logger log = LoggerFactory.getLogger(FileStorageService.class);
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".jpeg", ".png", ".webp");
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList("image/jpeg", "image/png", "image/webp");
+
+    private final CloudinaryService cloudinaryService;
 
     @Value("${app.upload.dir:./uploads}")
     private String uploadDir;
@@ -34,7 +38,7 @@ public class FileStorageService {
         try {
             this.uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(this.uploadPath);
-            log.info("Initialized upload directory at: {}", this.uploadPath);
+            log.info("Initialized local upload directory at: {}", this.uploadPath);
         } catch (IOException e) {
             throw new RuntimeException("Could not create upload directory!", e);
         }
@@ -65,11 +69,23 @@ public class FileStorageService {
             throw new BadRequestException("Invalid image MIME type: " + contentType);
         }
 
-        String generatedFilename = UUID.randomUUID().toString() + extension;
+        // 1. Primary Strategy: Cloudinary cloud storage
+        if (cloudinaryService.isConfigured()) {
+            try {
+                String cloudUrl = cloudinaryService.uploadFile(file);
+                log.info("Uploaded {} directly to Cloudinary: {}", originalFilename, cloudUrl);
+                return cloudUrl;
+            } catch (Exception ex) {
+                log.warn("Cloudinary upload failed for {}: {}. Falling back to local storage.", originalFilename, ex.getMessage());
+            }
+        }
 
+        // 2. Fallback Strategy: Local disk storage
+        String generatedFilename = UUID.randomUUID().toString() + extension;
         try {
             Path targetLocation = this.uploadPath.resolve(generatedFilename);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            log.info("Stored {} in local storage: /uploads/{}", originalFilename, generatedFilename);
             return "/uploads/" + generatedFilename;
         } catch (IOException ex) {
             log.error("Failed to store file {}", originalFilename, ex);

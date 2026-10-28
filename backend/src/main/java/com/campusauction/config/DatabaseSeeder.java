@@ -91,7 +91,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         ListingImage img1 = ListingImage.builder()
                 .listing(item1)
-                .imageUrl("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80")
+                .imageUrl("https://res.cloudinary.com/pemtzvgl/image/upload/v1793169281/campus_auction/samples/sample_cycle.jpg")
                 .displayOrder(0)
                 .build();
         item1.getImages().add(img1);
@@ -113,7 +113,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         ListingImage img2 = ListingImage.builder()
                 .listing(item2)
-                .imageUrl("https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd?auto=format&fit=crop&w=800&q=80")
+                .imageUrl("https://res.cloudinary.com/pemtzvgl/image/upload/v1793169282/campus_auction/samples/sample_calculator.jpg")
                 .displayOrder(0)
                 .build();
         item2.getImages().add(img2);
@@ -134,7 +134,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         ListingImage img3 = ListingImage.builder()
                 .listing(item3)
-                .imageUrl("https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80")
+                .imageUrl("https://res.cloudinary.com/pemtzvgl/image/upload/v1793169283/campus_auction/samples/sample_books.jpg")
                 .displayOrder(0)
                 .build();
         item3.getImages().add(img3);
@@ -155,7 +155,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         ListingImage img4 = ListingImage.builder()
                 .listing(item4)
-                .imageUrl("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80")
+                .imageUrl("https://res.cloudinary.com/pemtzvgl/image/upload/v1793169284/campus_auction/samples/sample_arduino.jpg")
                 .displayOrder(0)
                 .build();
         item4.getImages().add(img4);
@@ -177,7 +177,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         ListingImage img5 = ListingImage.builder()
                 .listing(item5)
-                .imageUrl("https://images.unsplash.com/photo-1580481077195-c328ad4f4477?auto=format&fit=crop&w=800&q=80")
+                .imageUrl("https://res.cloudinary.com/pemtzvgl/image/upload/v1793169310/campus_auction/samples/sample_chair.jpg")
                 .displayOrder(0)
                 .build();
         item5.getImages().add(img5);
