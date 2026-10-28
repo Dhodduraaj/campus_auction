@@ -1,0 +1,15 @@
+package com.campusauction.common.enums;
+
+public enum NotificationType {
+    BID_RECEIVED,
+    OUTBID,
+    AUCTION_CLOSING_SOON,
+    AUCTION_CLOSED,
+    PROVISIONAL_WINNER,
+    WINNER_APPROVED,
+    WINNER_REJECTED,
+    ITEM_RESERVED,
+    HANDOVER_CONFIRMED,
+    HANDOVER_FAILED,
+    AUCTION_CANCELLED
+}
