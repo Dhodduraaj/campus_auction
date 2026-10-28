@@ -17,8 +17,12 @@ import {
   CheckCircle,
   AlertCircle,
   AlertTriangle,
-  UserCheck
+  UserCheck,
+  MessageSquare,
+  Phone
 } from 'lucide-react';
+import { ConversationModal } from '../components/messaging/ConversationModal';
+import { ContactModal } from '../components/handover/ContactModal';
 
 interface ListingDetailPageProps {
   id: number;
@@ -40,6 +44,8 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
   const [bidSuccess, setBidSuccess] = useState<string | null>(null);
 
   const [actionLoading, setActionLoading] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
 
   const fetchDetails = async () => {
     try {
@@ -56,6 +62,7 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
       if (
         listingData.status === 'RESERVED' ||
         listingData.status === 'SOLD' ||
+        listingData.status === 'COMPLETED' ||
         listingData.status === 'PICKUP_FAILED'
       ) {
         const hData = await handoverService.getHandoverDetails(id);
@@ -622,6 +629,26 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
 
                     {(isSeller || isLeadingBidder) && (
                       <div className="pt-2 flex flex-col gap-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsContactModalOpen(true)}
+                            className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-bold text-xs uppercase py-2 px-3 rounded flex items-center justify-center gap-1.5 transition-colors"
+                          >
+                            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>Contact Info</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setIsChatModalOpen(true)}
+                            className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase py-2 px-3 rounded flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            <span>Direct Chat</span>
+                          </button>
+                        </div>
+
                         <button
                           disabled={actionLoading}
                           onClick={handleConfirmHandover}
@@ -638,6 +665,34 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
                         </button>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* Handover Completed */}
+                {(listing.status === 'COMPLETED' || listing.status === 'SOLD') && (isSeller || isLeadingBidder) && (
+                  <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg space-y-3">
+                    <p className="text-xs font-bold text-emerald-900 dark:text-emerald-300">
+                      Transaction Completed Successfully!
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsContactModalOpen(true)}
+                        className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-bold text-xs uppercase py-2 px-3 rounded flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Contact Info</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsChatModalOpen(true)}
+                        className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase py-2 px-3 rounded flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>View Chat</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -672,6 +727,30 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
           </div>
         </div>
       </div>
+
+      {/* Handover Contact Modal */}
+      {isContactModalOpen && listing && (
+        <ContactModal
+          isOpen={isContactModalOpen}
+          onClose={() => setIsContactModalOpen(false)}
+          listingId={listing.id}
+          listingTitle={listing.title}
+          onOpenChat={() => {
+            setIsContactModalOpen(false);
+            setIsChatModalOpen(true);
+          }}
+        />
+      )}
+
+      {/* Secure Conversation Modal */}
+      {isChatModalOpen && listing && (
+        <ConversationModal
+          isOpen={isChatModalOpen}
+          onClose={() => setIsChatModalOpen(false)}
+          listingId={listing.id}
+        />
+      )}
     </div>
   );
 };
+

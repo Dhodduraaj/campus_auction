@@ -32,4 +32,9 @@ export const handoverService = {
   async getHandoverDetails(listingId: number): Promise<HandoverDetail> {
     return apiRequest<HandoverDetail>(`/api/listings/${listingId}/handover`);
   },
+
+  async getContactDetails(listingId: number): Promise<import('../types').HandoverContact> {
+    return apiRequest<import('../types').HandoverContact>(`/api/listings/${listingId}/contact`);
+  },
 };
+

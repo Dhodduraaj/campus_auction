@@ -6,6 +6,7 @@ public enum ListingStatus {
     AWAITING_SELLER_APPROVAL,
     RESERVED,
     SOLD,
+    COMPLETED,
     UNSOLD,
     SELLER_REJECTED,
     CANCELLED,

@@ -36,6 +36,7 @@ public class AuctionClosingScheduler {
     private final NotificationService notificationService;
     private final AuditService auditService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
 
     // Run every 5 seconds to promptly close expired auctions
     @Scheduled(fixedDelay = 5000)
@@ -45,7 +46,7 @@ public class AuctionClosingScheduler {
 
         for (Listing listing : expiredOpenListings) {
             try {
-                processAuctionClosing(listing.getId());
+                transactionTemplate.executeWithoutResult(status -> processAuctionClosing(listing.getId()));
             } catch (Exception ex) {
                 log.error("Error closing auction {}: {}", listing.getId(), ex.getMessage());
             }
@@ -128,8 +129,8 @@ public class AuctionClosingScheduler {
             notificationService.createNotification(
                     provisionalWinner,
                     NotificationType.PROVISIONAL_WINNER,
-                    "You Won the Bidding! Pending Seller Approval",
-                    "Congratulations! Your bid of ₹" + winningBid.getAmount() + " won the auction for '" + listing.getTitle() + "'. Awaiting seller's final confirmation.",
+                    "You won the auction!",
+                    "Your bid of ₹" + winningBid.getAmount() + " is the highest valid bid. The seller must approve the sale before the item is reserved.",
                     listing
             );
 

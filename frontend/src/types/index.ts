@@ -19,6 +19,7 @@ export type ListingStatus =
   | 'AWAITING_SELLER_APPROVAL'
   | 'RESERVED'
   | 'SOLD'
+  | 'COMPLETED'
   | 'UNSOLD'
   | 'SELLER_REJECTED'
   | 'CANCELLED'
@@ -75,6 +76,11 @@ export interface ListingCard {
   primaryImageUrl: string | null;
   minimumAcceptableBid: number;
   expired: boolean;
+  sellerId?: number;
+  sellerName?: string;
+  winnerId?: number;
+  winnerName?: string;
+  closedAt?: string;
 }
 
 export interface ListingDetail {
@@ -149,3 +155,69 @@ export interface ApiResponse<T> {
   errors?: Record<string, string>;
   timestamp: string;
 }
+
+export interface HandoverContact {
+  userId: number;
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  role: Role;
+  conversationId?: number;
+  campusHandoverGuide?: string;
+}
+
+export interface Message {
+  id: number;
+  conversationId: number;
+  senderId: number;
+  senderName: string;
+  content: string;
+  createdAt: string;
+  readAt?: string;
+  mine: boolean;
+}
+
+export interface Conversation {
+  id: number;
+  listingId?: number;
+  listingTitle?: string;
+  listingThumbnailUrl?: string;
+  currentPrice?: number;
+  listingStatus?: ListingStatus;
+  sellerId: number;
+  sellerName: string;
+  winnerId: number;
+  winnerName: string;
+  otherPartyName: string;
+  otherPartyId: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  unreadCount: number;
+  lastMessage?: Message;
+}
+
+export interface AiChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface AiBidConfirmation {
+  authToken: string;
+  listingId: number;
+  listingTitle: string;
+  listingImageUrl?: string;
+  currentHighestBid: number;
+  minimumNextValidBid: number;
+  exactBidAmount: number;
+  maxAuthorizedAmount: number;
+  closingAt: string;
+  expiresAt: string;
+}
+
+export interface AiChatResponse {
+  reply: string;
+  recommendations: ListingCard[];
+  bidConfirmation?: AiBidConfirmation;
+}
+

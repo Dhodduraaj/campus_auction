@@ -12,7 +12,10 @@ import {
   Shield,
   Sun,
   Moon,
-  GraduationCap
+  GraduationCap,
+  Sparkles,
+  Trophy,
+  MessageSquare
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -65,6 +68,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
                 Browse Auctions
               </button>
 
+              <button
+                onClick={() => onNavigate('ai-assistant')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
+                  currentPage === 'ai-assistant'
+                    ? 'bg-slate-800 text-purple-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span>AI Assistant</span>
+              </button>
+
               {isAuthenticated && isSenior && (
                 <button
                   onClick={() => onNavigate('my-listings')}
@@ -79,16 +94,30 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
               )}
 
               {isAuthenticated && isJunior && (
-                <button
-                  onClick={() => onNavigate('my-bids')}
-                  className={`px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
-                    currentPage === 'my-bids'
-                      ? 'bg-slate-800 text-orange-400'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                  }`}
-                >
-                  My Bids
-                </button>
+                <>
+                  <button
+                    onClick={() => onNavigate('my-bids')}
+                    className={`px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
+                      currentPage === 'my-bids'
+                        ? 'bg-slate-800 text-orange-400'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    My Bids
+                  </button>
+
+                  <button
+                    onClick={() => onNavigate('won-items')}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
+                      currentPage === 'won-items'
+                        ? 'bg-slate-800 text-orange-400'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Trophy className="w-4 h-4 text-amber-400" />
+                    <span>Won Items</span>
+                  </button>
+                </>
               )}
             </nav>
           </div>
@@ -198,6 +227,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
                         <User className="w-4 h-4 text-slate-400" /> Profile
                       </button>
 
+                      <button
+                        onClick={() => onNavigate('ai-assistant')}
+                        className="w-full text-left px-3.5 py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 font-medium"
+                      >
+                        <Sparkles className="w-4 h-4 text-purple-400" /> AI Assistant
+                      </button>
+
                       {isSenior && (
                         <button
                           onClick={() => onNavigate('my-listings')}
@@ -208,12 +244,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
                       )}
 
                       {isJunior && (
-                        <button
-                          onClick={() => onNavigate('my-bids')}
-                          className="w-full text-left px-3.5 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 font-medium"
-                        >
-                          <Gavel className="w-4 h-4 text-slate-400" /> My Bids
-                        </button>
+                        <>
+                          <button
+                            onClick={() => onNavigate('my-bids')}
+                            className="w-full text-left px-3.5 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 font-medium"
+                          >
+                            <Gavel className="w-4 h-4 text-slate-400" /> My Bids
+                          </button>
+
+                          <button
+                            onClick={() => onNavigate('won-items')}
+                            className="w-full text-left px-3.5 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 font-medium"
+                          >
+                            <Trophy className="w-4 h-4 text-amber-400" /> Won Items / Purchases
+                          </button>
+                        </>
                       )}
 
                       <div className="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">

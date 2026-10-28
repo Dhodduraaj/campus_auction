@@ -30,9 +30,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
         </span>
       );
     case 'SOLD':
+    case 'COMPLETED':
       return (
         <span className={`inline-flex items-center rounded bg-emerald-700 text-white font-bold uppercase tracking-wider ${sizeClasses}`}>
-          Sold
+          Completed
         </span>
       );
     case 'UNSOLD':

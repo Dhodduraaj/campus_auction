@@ -87,4 +87,15 @@ public class HandoverController {
         HandoverDetailDto dto = handoverService.getHandoverDetails(listingId);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
+
+    @GetMapping("/contact")
+    @Operation(summary = "Get authorized counterparty contact details for reserved/completed auctions")
+    public ResponseEntity<ApiResponse<com.campusauction.handover.dto.HandoverContactDto>> getContactDetails(
+            @PathVariable("id") Long listingId
+    ) {
+        User user = authService.getCurrentAuthenticatedUser();
+        com.campusauction.handover.dto.HandoverContactDto dto = handoverService.getContactDetails(listingId, user);
+        return ResponseEntity.ok(ApiResponse.success(dto));
+    }
 }
+

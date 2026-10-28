@@ -261,8 +261,42 @@ public class ListingService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ListingCardDto> getSellerListings(Long sellerId, Pageable pageable) {
-        return listingRepository.findBySellerIdOrderByCreatedAtDesc(sellerId, pageable)
+    public Page<ListingCardDto> getSellerListings(Long sellerId, String tab, Pageable pageable) {
+        if (tab == null || tab.isBlank() || tab.equalsIgnoreCase("all")) {
+            return listingRepository.findBySellerIdOrderByCreatedAtDesc(sellerId, pageable)
+                    .map(ListingCardDto::fromEntity);
+        }
+
+        List<ListingStatus> statuses;
+        switch (tab.toLowerCase()) {
+            case "active":
+                statuses = List.of(ListingStatus.OPEN);
+                break;
+            case "awaiting_approval":
+                statuses = List.of(ListingStatus.AWAITING_SELLER_APPROVAL);
+                break;
+            case "reserved":
+                statuses = List.of(ListingStatus.RESERVED);
+                break;
+            case "completed":
+                statuses = List.of(ListingStatus.COMPLETED, ListingStatus.SOLD);
+                break;
+            case "unsuccessful":
+                statuses = List.of(ListingStatus.UNSOLD, ListingStatus.SELLER_REJECTED, ListingStatus.CANCELLED, ListingStatus.PICKUP_FAILED);
+                break;
+            default:
+                return listingRepository.findBySellerIdOrderByCreatedAtDesc(sellerId, pageable)
+                        .map(ListingCardDto::fromEntity);
+        }
+
+        return listingRepository.findBySellerIdAndStatusIn(sellerId, statuses, pageable)
+                .map(ListingCardDto::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ListingCardDto> getWonListings(Long userId, Pageable pageable) {
+        List<ListingStatus> wonStatuses = List.of(ListingStatus.RESERVED, ListingStatus.COMPLETED, ListingStatus.SOLD);
+        return listingRepository.findWonListingsByUser(userId, wonStatuses, pageable)
                 .map(ListingCardDto::fromEntity);
     }
 

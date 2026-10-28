@@ -24,10 +24,18 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     List<Listing> findByStatusAndClosingAtLessThanEqual(ListingStatus status, OffsetDateTime closingAt);
 
+    List<Listing> findByStatusOrderByClosingAtAsc(ListingStatus status);
+
     Page<Listing> findBySellerIdOrderByCreatedAtDesc(Long sellerId, Pageable pageable);
+
+    Page<Listing> findBySellerIdAndStatusIn(Long sellerId, List<ListingStatus> statuses, Pageable pageable);
 
     long countBySellerIdAndStatus(Long sellerId, ListingStatus status);
 
     @Query("SELECT DISTINCT l FROM Listing l JOIN Bid b ON b.listing = l WHERE b.bidder.id = :bidderId ORDER BY l.closingAt DESC")
     Page<Listing> findListingsBidByUser(@Param("bidderId") Long bidderId, Pageable pageable);
+
+    @Query("SELECT DISTINCT l FROM Listing l WHERE l.leadingBidder.id = :userId AND l.status IN :statuses ORDER BY l.closedAt DESC NULLS LAST, l.updatedAt DESC")
+    Page<Listing> findWonListingsByUser(@Param("userId") Long userId, @Param("statuses") List<ListingStatus> statuses, Pageable pageable);
 }
+

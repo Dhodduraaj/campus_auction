@@ -9,6 +9,7 @@ import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.BadRequestException;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.ResourceNotFoundException;
+import com.campusauction.handover.dto.HandoverContactDto;
 import com.campusauction.handover.dto.HandoverDetailDto;
 import com.campusauction.handover.dto.PickupFailureRequest;
 import com.campusauction.handover.dto.SellerDecisionRequest;
@@ -16,6 +17,8 @@ import com.campusauction.listing.Listing;
 import com.campusauction.listing.ListingRepository;
 import com.campusauction.listing.dto.ListingCardDto;
 import com.campusauction.listing.dto.ListingDetailDto;
+import com.campusauction.messaging.Conversation;
+import com.campusauction.messaging.ConversationRepository;
 import com.campusauction.notification.NotificationService;
 import com.campusauction.user.User;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class HandoverService {
     private final ListingRepository listingRepository;
     private final AuctionOutcomeRepository auctionOutcomeRepository;
     private final HandoverRepository handoverRepository;
+    private final ConversationRepository conversationRepository;
     private final NotificationService notificationService;
     private final AuditService auditService;
     private final SimpMessagingTemplate messagingTemplate;
@@ -72,11 +76,22 @@ public class HandoverService {
             handover.setOutcome("PENDING");
             handoverRepository.save(handover);
 
+            // Automatically create or activate dedicated Conversation for seller and winning buyer
+            conversationRepository.findByListingId(listingId).orElseGet(() -> {
+                Conversation conv = Conversation.builder()
+                        .listing(listing)
+                        .seller(listing.getSeller())
+                        .winner(outcome.getProvisionalWinner())
+                        .status("ACTIVE")
+                        .build();
+                return conversationRepository.save(conv);
+            });
+
             notificationService.createNotification(
                     outcome.getProvisionalWinner(),
                     NotificationType.WINNER_APPROVED,
                     "Seller Approved! Item Reserved",
-                    "The seller has approved your winning bid of ₹" + listing.getCurrentHighestBid() + " for '" + listing.getTitle() + "'. Please coordinate campus handover.",
+                    "The seller has approved your winning bid of ₹" + listing.getCurrentHighestBid() + " for '" + listing.getTitle() + "'. Item is reserved and contact details are unlocked. Please coordinate campus handover.",
                     listing
             );
 
@@ -153,13 +168,13 @@ public class HandoverService {
             handover.setOutcome("COMPLETED");
             handover.setCompletedAt(now);
 
-            listing.setStatus(ListingStatus.SOLD);
+            listing.setStatus(ListingStatus.COMPLETED);
             listing.setClosedAt(now);
             listingRepository.save(listing);
 
             AuctionOutcome outcome = auctionOutcomeRepository.findByListingId(listingId).orElse(null);
             if (outcome != null) {
-                outcome.setFinalStatus(ListingStatus.SOLD);
+                outcome.setFinalStatus(ListingStatus.COMPLETED);
                 outcome.setCompletedAt(now);
                 auctionOutcomeRepository.save(outcome);
             }
@@ -168,7 +183,7 @@ public class HandoverService {
                     listing.getSeller(),
                     NotificationType.HANDOVER_CONFIRMED,
                     "Sale Complete: " + listing.getTitle(),
-                    "Both parties confirmed handover! Item is officially marked SOLD.",
+                    "Both parties confirmed handover! The auction for '" + listing.getTitle() + "' is officially completed for ₹" + listing.getCurrentHighestBid() + ".",
                     listing
             );
 
@@ -176,11 +191,11 @@ public class HandoverService {
                     listing.getLeadingBidder(),
                     NotificationType.HANDOVER_CONFIRMED,
                     "Purchase Complete: " + listing.getTitle(),
-                    "Both parties confirmed handover! Enjoy your new item.",
+                    "Handover confirmed! Your purchase of '" + listing.getTitle() + "' for ₹" + listing.getCurrentHighestBid() + " is officially completed.",
                     listing
             );
 
-            auditService.recordEvent(listing, null, "SALE_COMPLETED", "Both parties verified handover. Item sold.");
+            auditService.recordEvent(listing, null, "SALE_COMPLETED", "Both parties verified handover. Auction COMPLETED.");
         }
 
         Handover savedHandover = handoverRepository.save(handover);
@@ -247,6 +262,38 @@ public class HandoverService {
         return handoverRepository.findByListingId(listingId)
                 .map(HandoverDetailDto::fromEntity)
                 .orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public HandoverContactDto getContactDetails(Long listingId, User currentUser) {
+        Listing listing = listingRepository.findById(listingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Auction listing not found"));
+
+        if (listing.getStatus() != ListingStatus.RESERVED &&
+            listing.getStatus() != ListingStatus.COMPLETED &&
+            listing.getStatus() != ListingStatus.SOLD) {
+            throw new BadRequestException("Contact details are only disclosed once the auction is approved and reserved.");
+        }
+
+        boolean isSeller = listing.getSeller().getId().equals(currentUser.getId());
+        boolean isWinner = listing.getLeadingBidder() != null && listing.getLeadingBidder().getId().equals(currentUser.getId());
+
+        if (!isSeller && !isWinner) {
+            throw new ForbiddenException("Access denied: You are not authorized to view contact details for this transaction.");
+        }
+
+        User counterparty = isSeller ? listing.getLeadingBidder() : listing.getSeller();
+        Long convId = conversationRepository.findByListingId(listingId).map(Conversation::getId).orElse(null);
+
+        return HandoverContactDto.builder()
+                .userId(counterparty.getId())
+                .name(counterparty.getName())
+                .email(counterparty.getEmail())
+                .phoneNumber(counterparty.getPhoneNumber() != null ? counterparty.getPhoneNumber() : "Not provided")
+                .role(counterparty.getRole())
+                .conversationId(convId)
+                .campusHandoverGuide("Meet at a well-lit, public campus location (e.g. Student Center, Campus Library, or Main Gate) to verify the item condition before confirming handover.")
+                .build();
     }
 
     private void broadcastUpdate(Listing listing) {

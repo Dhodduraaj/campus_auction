@@ -55,6 +55,10 @@ public class CampusAuctionApplication {
                             if (System.getProperty(key) == null && System.getenv(key) == null) {
                                 System.setProperty(key, val);
                             }
+                            String upperKey = key.toUpperCase();
+                            if (System.getProperty(upperKey) == null && System.getenv(upperKey) == null) {
+                                System.setProperty(upperKey, val);
+                            }
                         }
                     }
                     break;

@@ -14,6 +14,8 @@ import { NotificationsPage } from './pages/NotificationsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { AiAssistantPage } from './pages/AiAssistantPage';
+import { WonItemsPage } from './pages/WonItemsPage';
 import { ListingCategory } from './types';
 import { ShieldAlert, ArrowRight } from 'lucide-react';
 
@@ -85,7 +87,7 @@ export const MainApp: React.FC = () => {
 
   const renderPage = () => {
     // Unauthenticated protection for private routes
-    const privateRoutes = ['create-listing', 'my-listings', 'my-bids', 'notifications', 'profile'];
+    const privateRoutes = ['create-listing', 'my-listings', 'my-bids', 'won-items', 'notifications', 'profile'];
     if (privateRoutes.includes(nav.page) && !isAuthenticated) {
       return <LoginPage onNavigate={navigate} />;
     }
@@ -104,11 +106,11 @@ export const MainApp: React.FC = () => {
     }
 
     // Role-based protection: Senior cannot access buyer-only bidding dashboard
-    if (nav.page === 'my-bids' && user?.role === 'SENIOR') {
+    if ((nav.page === 'my-bids' || nav.page === 'won-items') && user?.role === 'SENIOR') {
       return (
         <AccessDenied
           title="Junior Access Only"
-          message="Senior accounts can list and sell items. Placing and tracking bids is reserved for Junior accounts."
+          message="Senior accounts can list and sell items. Placing bids and managing purchases is reserved for Junior accounts."
           onNavigate={navigate}
           targetPage="my-listings"
           targetLabel="View My Listings"
@@ -126,6 +128,10 @@ export const MainApp: React.FC = () => {
             initialCategory={nav.params?.category as ListingCategory}
           />
         );
+      case 'ai-assistant':
+        return <AiAssistantPage onNavigate={navigate} />;
+      case 'won-items':
+        return <WonItemsPage onNavigate={navigate} />;
       case 'listing-detail':
         return <ListingDetailPage id={Number(nav.params?.id)} onNavigate={navigate} />;
       case 'create-listing':

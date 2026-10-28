@@ -30,6 +30,11 @@ public class ListingCardDto {
     private String primaryImageUrl;
     private BigDecimal minimumAcceptableBid;
     private boolean isExpired;
+    private Long sellerId;
+    private String sellerName;
+    private Long winnerId;
+    private String winnerName;
+    private OffsetDateTime closedAt;
 
     public static ListingCardDto fromEntity(Listing listing) {
         String primaryImage = null;
@@ -51,6 +56,11 @@ public class ListingCardDto {
                 .primaryImageUrl(primaryImage)
                 .minimumAcceptableBid(listing.getMinimumAcceptableBid())
                 .isExpired(listing.isExpired(OffsetDateTime.now()))
+                .sellerId(listing.getSeller() != null ? listing.getSeller().getId() : null)
+                .sellerName(listing.getSeller() != null ? listing.getSeller().getName() : null)
+                .winnerId(listing.getLeadingBidder() != null ? listing.getLeadingBidder().getId() : null)
+                .winnerName(listing.getLeadingBidder() != null ? listing.getLeadingBidder().getName() : null)
+                .closedAt(listing.getClosedAt())
                 .build();
     }
 }

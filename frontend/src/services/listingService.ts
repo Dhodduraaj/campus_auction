@@ -101,8 +101,13 @@ export const listingService = {
     return result.url;
   },
 
-  async getMyListings(page = 0, size = 12): Promise<PagedData<ListingCard>> {
-    return apiRequest<PagedData<ListingCard>>(`/api/users/me/listings?page=${page}&size=${size}`);
+  async getMyListings(tab?: string, page = 0, size = 12): Promise<PagedData<ListingCard>> {
+    const url = tab ? `/api/users/me/listings?tab=${tab}&page=${page}&size=${size}` : `/api/users/me/listings?page=${page}&size=${size}`;
+    return apiRequest<PagedData<ListingCard>>(url);
+  },
+
+  async getMyWonItems(page = 0, size = 12): Promise<PagedData<ListingCard>> {
+    return apiRequest<PagedData<ListingCard>>(`/api/users/me/won?page=${page}&size=${size}`);
   },
 
   async getMyBids(page = 0, size = 12): Promise<PagedData<ListingCard>> {

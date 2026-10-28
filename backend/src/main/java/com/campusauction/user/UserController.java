@@ -39,14 +39,27 @@ public class UserController {
     }
 
     @GetMapping("/listings")
-    @Operation(summary = "Get all listings created by the authenticated student")
+    @Operation(summary = "Get all listings created by the authenticated student with optional status tab")
     public ResponseEntity<ApiResponse<PagedResponse<ListingCardDto>>> getMyListings(
+            @RequestParam(required = false) String tab,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         User user = authService.getCurrentAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
-        Page<ListingCardDto> listings = listingService.getSellerListings(user.getId(), pageable);
+        Page<ListingCardDto> listings = listingService.getSellerListings(user.getId(), tab, pageable);
+        return ResponseEntity.ok(ApiResponse.success(PagedResponse.of(listings)));
+    }
+
+    @GetMapping("/won")
+    @Operation(summary = "Get all auctions won by the authenticated junior student")
+    public ResponseEntity<ApiResponse<PagedResponse<ListingCardDto>>> getMyWonItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        User user = authService.getCurrentAuthenticatedUser();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ListingCardDto> listings = listingService.getWonListings(user.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(PagedResponse.of(listings)));
     }
 
