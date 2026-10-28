@@ -6,6 +6,11 @@ This document outlines the physical database schema, data types, constraints, in
 
 ## 1. Physical Table Layout & Data Types
 
+### 1.1 Rendered Visual Schema Diagram
+![Campus Auction Database Schema Diagram](./database_diagram.png)
+
+### 1.2 Interactive Mermaid Class Diagram
+
 ```mermaid
 classDiagram
     direction TB

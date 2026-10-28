@@ -21,7 +21,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
   // Filter States
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState<ListingCategory | ''>(initialCategory || '');
-  const [condition, setCondition] = useState<ItemCondition | ''>( '');
+  const [condition, setCondition] = useState<ItemCondition | ''>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [status, setStatus] = useState<ListingStatus | ''>('OPEN');
@@ -103,16 +103,13 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Page Title & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="font-display font-black text-3xl sm:text-4xl text-slate-900 tracking-tight">
-            Campus Marketplace
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
+            Marketplace
           </h1>
-          <p className="text-slate-500 text-sm mt-1 font-mono">
-            Browse active student listings, place live bids, or track closing timers.
-          </p>
         </div>
 
         {/* Search input form */}
@@ -121,15 +118,15 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search cycles, books, electronics..."
+              placeholder="Search items..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-300 rounded focus:outline-none focus:border-orange-500 font-sans"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 font-sans"
             />
           </div>
           <button
             type="submit"
-            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase px-4 py-2.5 rounded transition-colors"
+            className="bg-slate-900 dark:bg-orange-600 hover:bg-slate-800 dark:hover:bg-orange-700 text-white font-bold text-xs uppercase px-4 py-2.5 rounded transition-colors"
           >
             Search
           </button>
@@ -137,37 +134,41 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
       </div>
 
       {/* Main Layout: Filters Sidebar + Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Mobile Filter Toggle */}
-        <div className="lg:hidden flex justify-between items-center bg-white p-3 border border-slate-200 rounded">
-          <span className="font-bold text-sm text-slate-800">Filter & Sort Auctions</span>
+        <div className="lg:hidden flex justify-between items-center bg-white dark:bg-slate-900 p-3 border border-slate-200 dark:border-slate-800 rounded">
+          <span className="font-bold text-sm text-slate-800 dark:text-slate-200">Filters</span>
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="flex items-center gap-1.5 text-xs font-bold text-orange-600 px-3 py-1.5 bg-orange-50 rounded border border-orange-200"
+            className="flex items-center gap-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 rounded border border-orange-200 dark:border-orange-800"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>{mobileFilterOpen ? 'Hide Filters' : 'Show Filters'}</span>
+            <span>{mobileFilterOpen ? 'Hide' : 'Filter'}</span>
           </button>
         </div>
 
         {/* Sidebar Filters */}
-        <aside className={`${mobileFilterOpen ? 'block' : 'hidden'} lg:block space-y-6 bg-white p-5 rounded-lg border border-slate-200 shadow-sm h-fit`}>
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 className="font-display font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-              <Filter className="w-4 h-4 text-orange-600" />
+        <aside
+          className={`${
+            mobileFilterOpen ? 'block' : 'hidden'
+          } lg:block space-y-5 bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm h-fit`}
+        >
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="font-display font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
               <span>Filters</span>
             </h3>
             <button
               onClick={handleResetFilters}
-              className="text-xs text-slate-500 hover:text-orange-600 flex items-center gap-1 font-mono font-medium"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-1 font-mono font-medium"
             >
               <RotateCcw className="w-3 h-3" /> Reset
             </button>
           </div>
 
           {/* Category Filter */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               Category
             </label>
             <select
@@ -176,7 +177,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                 setCategory(e.target.value as ListingCategory | '');
                 setPage(0);
               }}
-              className="w-full p-2 text-sm bg-white border border-slate-200 rounded focus:border-orange-500 focus:outline-none"
+              className="w-full p-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none"
             >
               <option value="">All Categories</option>
               <option value="CYCLE">Bicycles & Cycles</option>
@@ -191,8 +192,8 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
           </div>
 
           {/* Item Condition */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               Condition
             </label>
             <select
@@ -201,7 +202,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                 setCondition(e.target.value as ItemCondition | '');
                 setPage(0);
               }}
-              className="w-full p-2 text-sm bg-white border border-slate-200 rounded focus:border-orange-500 focus:outline-none"
+              className="w-full p-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none"
             >
               <option value="">All Conditions</option>
               <option value="NEW">New (Unopened)</option>
@@ -212,10 +213,10 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
             </select>
           </div>
 
-          {/* Price Range */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Current Price ($)
+          {/* Price Range (INR) */}
+          <div className="space-y-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              Price (₹)
             </label>
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -223,23 +224,29 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                 placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                onBlur={() => { setPage(0); fetchListings(); }}
-                className="w-full p-2 text-sm border border-slate-200 rounded focus:border-orange-500 focus:outline-none"
+                onBlur={() => {
+                  setPage(0);
+                  fetchListings();
+                }}
+                className="w-full p-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                onBlur={() => { setPage(0); fetchListings(); }}
-                className="w-full p-2 text-sm border border-slate-200 rounded focus:border-orange-500 focus:outline-none"
+                onBlur={() => {
+                  setPage(0);
+                  fetchListings();
+                }}
+                className="w-full p-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Closing Soon Toggle */}
-          <div className="pt-2 border-t border-slate-100">
-            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800">
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={closingSoon}
@@ -249,13 +256,13 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                 }}
                 className="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500"
               />
-              <span>Closing Soon (Next 24h)</span>
+              <span>Closing Soon (24h)</span>
             </label>
           </div>
 
           {/* Auction Status */}
-          <div className="space-y-1.5 pt-2 border-t border-slate-100">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               Status
             </label>
             <select
@@ -264,10 +271,10 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                 setStatus(e.target.value as ListingStatus | '');
                 setPage(0);
               }}
-              className="w-full p-2 text-sm bg-white border border-slate-200 rounded focus:border-orange-500 focus:outline-none"
+              className="w-full p-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none"
             >
               <option value="OPEN">Live Auctions Only</option>
-              <option value="">All Statuses (Including Closed)</option>
+              <option value="">All Statuses</option>
               <option value="AWAITING_SELLER_APPROVAL">Awaiting Approval</option>
               <option value="RESERVED">Reserved</option>
               <option value="SOLD">Sold</option>
@@ -277,15 +284,16 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
         </aside>
 
         {/* Listings Grid & Controls */}
-        <main className="lg:col-span-3 space-y-6">
+        <main className="lg:col-span-3 space-y-5">
           {/* Sorting & Result Counts Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 border border-slate-200 rounded-lg">
-            <span className="text-xs font-mono font-bold text-slate-700">
-              Showing <span className="text-orange-600">{listings.length}</span> of {totalElements} listings
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 px-4 py-3 border border-slate-200 dark:border-slate-800 rounded-lg">
+            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+              Showing <span className="text-orange-600 dark:text-orange-400">{listings.length}</span> of{' '}
+              {totalElements} listings
             </span>
 
             <div className="flex items-center gap-2 text-xs">
-              <span className="font-semibold text-slate-600">Sort by:</span>
+              <span className="font-semibold text-slate-600 dark:text-slate-400">Sort by:</span>
               <select
                 value={`${sortBy}-${sortDirection}`}
                 onChange={(e) => {
@@ -294,7 +302,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
                   setSortDirection(dir as 'asc' | 'desc');
                   setPage(0);
                 }}
-                className="p-1.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-800 focus:outline-none"
+                className="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs font-bold text-slate-800 dark:text-white focus:outline-none"
               >
                 <option value="closingAt-asc">Closing Soonest</option>
                 <option value="createdAt-desc">Newest Listings</option>
@@ -308,28 +316,32 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
               {[1, 2, 3, 4, 5, 6].map((n) => (
-                <div key={n} className="h-80 bg-slate-200 rounded-lg"></div>
+                <div key={n} className="h-80 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
               ))}
             </div>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center space-y-3">
-              <p className="text-sm font-bold text-red-800">{error}</p>
+            <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-lg p-8 text-center space-y-3">
+              <p className="text-sm font-bold text-rose-800 dark:text-rose-300">{error}</p>
               <button
                 onClick={fetchListings}
-                className="bg-red-600 text-white font-bold text-xs uppercase px-4 py-2 rounded"
+                className="bg-rose-600 text-white font-bold text-xs uppercase px-4 py-2 rounded"
               >
                 Retry Request
               </button>
             </div>
           ) : listings.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-lg p-16 text-center space-y-3">
-              <h3 className="font-display font-bold text-lg text-slate-800">No auctions match your filters</h3>
-              <p className="text-xs text-slate-500 font-mono">Try adjusting your keywords, price limits, or category filters.</p>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-14 text-center space-y-3">
+              <h3 className="font-display font-bold text-base text-slate-800 dark:text-slate-200">
+                No auctions found
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                Try adjusting your search keywords, price limits, or filters.
+              </p>
               <button
                 onClick={handleResetFilters}
-                className="bg-slate-900 text-white font-bold text-xs uppercase px-4 py-2 rounded"
+                className="bg-slate-900 dark:bg-orange-600 text-white font-bold text-xs uppercase px-4 py-2 rounded"
               >
-                Clear All Filters
+                Clear Filters
               </button>
             </div>
           ) : (
@@ -346,23 +358,23 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onNavigate, in
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-slate-200 pt-6">
+            <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-5">
               <button
                 disabled={page === 0}
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 bg-white text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 <ChevronLeft className="w-4 h-4" /> Previous
               </button>
 
-              <span className="text-xs font-mono font-bold text-slate-600">
+              <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
                 Page {page + 1} of {totalPages}
               </span>
 
               <button
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 bg-white text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 Next <ChevronRight className="w-4 h-4" />
               </button>

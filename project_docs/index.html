@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Auction Platform — System Visualizations & Diagrams</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            auction: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
+            campus: {
+              navy: '#0f172a',
+              card: '#1e293b',
+              border: '#334155',
+            }
+          }
+        }
+      }
+    };
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0f172a',
+        primaryColor: '#1e293b',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#ea580c',
+        lineColor: '#38bdf8',
+        secondaryColor: '#334155',
+        tertiaryColor: '#1e293b'
+      }
+    });
+  </script>
+  <style>
+    body {
+      background-color: #0b1120;
+      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      background: #0f172a;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .tab-btn.active {
+      background: #ea580c;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Banner / Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 font-black text-white text-xl">
+          🔨
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold text-white tracking-tight">Campus Auction Platform</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Architecture & Visuals</span>
+          </div>
+          <p class="text-xs text-slate-400 font-mono">Production Technical Visualizations & System Schemas</p>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="flex items-center space-x-3 text-xs font-medium">
+        <a href="architecture_diagram.md" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Docs (.md)</a>
+        <a href="https://github.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 text-orange-400 border border-orange-500/30 transition">Repo Home</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+    <div class="flex flex-wrap gap-2 p-1.5 rounded-xl bg-slate-900 border border-slate-800">
+      <button onclick="switchTab('architecture')" id="tab-architecture" class="tab-btn active px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+        <span>🏗️ System Architecture</span>
+      </button>
+      <button onclick="switchTab('database')" id="tab-database" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+        <span>🗄️ Database Schema</span>
+      </button>
+      <button onclick="switchTab('er')" id="tab-er" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+        <span>📊 Entity-Relationship (ER)</span>
+      </button>
+      <button onclick="switchTab('workflows')" id="tab-workflows" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+        <span>🔄 Workflows & Concurrency</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+
+    <!-- 1. ARCHITECTURE SECTION -->
+    <section id="content-architecture" class="space-y-6">
+      <div class="glass-panel p-6 rounded-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span>🏗️ System Architecture</span>
+              <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-mono">3-Tier + Real-Time WebSocket</span>
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">High-level decoupling: React 19 Client Tier, Spring Boot 3.3.4 Application Tier, and PostgreSQL 17 Persistence Tier.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleViewMode('arch', 'vector')" id="btn-arch-vector" class="px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold">Mermaid Vector</button>
+            <button onclick="toggleViewMode('arch', 'image')" id="btn-arch-image" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">Rendered PNG</button>
+          </div>
+        </div>
+
+        <!-- Arch Views -->
+        <div class="mt-6">
+          <div id="arch-view-vector" class="mermaid">
+graph TB
+    subgraph Client_Tier["Client Tier (Frontend - Port 5180)"]
+        Browser["Student Browser (Desktop / Mobile)"]
+        ReactApp["React 19 + TypeScript SPA"]
+        TailwindUI["Tailwind CSS (Bold Auction Theme)"]
+        StompClient["STOMP / SockJS Client"]
+        WebNotificationAPI["Web Notifications API (Desktop Popups)"]
+        
+        Browser --> ReactApp
+        ReactApp --> TailwindUI
+        ReactApp --> StompClient
+        ReactApp --> WebNotificationAPI
+    end
+
+    subgraph Gateway_Proxy["Development & Routing Gateway"]
+        ViteProxy["Vite Dev Reverse Proxy (Port 5180)"]
+        ReactApp -.->|HTTP REST /api| ViteProxy
+        ReactApp -.->|Static /uploads| ViteProxy
+        StompClient -.->|WebSocket /ws| ViteProxy
+    end
+
+    subgraph Backend_Tier["Backend Application Tier (Spring Boot 3.3.4 / Java 21 - Port 8085)"]
+        Tomcat["Embedded Apache Tomcat"]
+        SecurityFilter["Spring Security Filter Chain (JWT Auth)"]
+        
+        subgraph Controllers["REST Controllers"]
+            AuthController["AuthController (/api/auth)"]
+            ListingController["ListingController (/api/listings)"]
+            BidController["BidController (/api/listings/{id}/bids)"]
+            HandoverController["HandoverController (/api/listings/{id})"]
+            UserController["UserController (/api/users/me)"]
+            FileController["FileController (/api/listings/upload-image)"]
+        end
+
+        subgraph Service_Layer["Business & Engine Services"]
+            AuthService["AuthService (Campus Verification)"]
+            ListingService["ListingService (Validations & Specifications)"]
+            BiddingService["BiddingService (Pessimistic Lock Engine)"]
+            Scheduler["AuctionClosingScheduler (@Scheduled Auto-Close)"]
+            HandoverService["HandoverService (Seller Approval & Handover)"]
+            NotificationService["NotificationService (In-app + Live Push)"]
+            AuditService["AuditService (Append-only Audit Log)"]
+            FileStorageService["FileStorageService (Local / Cloudinary)"]
+        end
+
+        subgraph Messaging_Subsystem["Real-Time Subsystem"]
+            WsBroker["Spring STOMP Message Broker (/topic, /queue)"]
+            Broadcaster["Auction & Notification Event Broadcaster"]
+        end
+
+        subgraph Persistence_Integration["Spring Data JPA & Hibernate"]
+            HikariCP["HikariCP Connection Pool"]
+            Repositories["JPA Repositories (LockModeType.PESSIMISTIC_WRITE)"]
+        end
+
+        Tomcat --> SecurityFilter
+        SecurityFilter --> Controllers
+        Controllers --> Service_Layer
+        Service_Layer --> Broadcaster
+        Broadcaster --> WsBroker
+        Service_Layer --> Repositories
+        Repositories --> HikariCP
+    end
+
+    subgraph Storage_Tier["Data & Storage Tier"]
+        PostgresDB[("PostgreSQL 17 Database (campus_auction)")]
+        FlywayEngine["Flyway Migration Engine (V1__initial_schema.sql)"]
+        DiskUploads["Local Disk Uploads (/uploads/**)"]
+        
+        HikariCP --> PostgresDB
+        FlywayEngine -.->|On Startup| PostgresDB
+        FileStorageService --> DiskUploads
+    end
+
+    ViteProxy == Proxy HTTP :8085 ==> Tomcat
+    ViteProxy == Proxy WS :8085 ==> Tomcat
+    WsBroker -.->|Push to /topic/auctions/{id}| StompClient
+    WsBroker -.->|Push to /topic/notifications| StompClient
+          </div>
+
+          <div id="arch-view-image" class="hidden">
+            <div class="rounded-xl border border-slate-700 overflow-hidden bg-slate-900 p-2 flex justify-center">
+              <img src="architecture_diagram.png" alt="Architecture Diagram" class="max-w-full h-auto rounded-lg shadow-2xl">
+            </div>
+          </div>
+        </div>
+
+        <!-- Arch Highlights Table -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-bold text-orange-400 uppercase tracking-wider">Concurrency Engine</span>
+            <h4 class="text-base font-semibold text-white mt-1">Pessimistic Row Locking</h4>
+            <p class="text-xs text-slate-400 mt-2">Bidding transactions acquire row-level <code class="text-orange-300">PESSIMISTIC_WRITE</code> locks in PostgreSQL, serializing millisecond bid collisions without dirty reads.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Real-Time Sync</span>
+            <h4 class="text-base font-semibold text-white mt-1">Spring STOMP Broker</h4>
+            <p class="text-xs text-slate-400 mt-2">Pushes atomic bid updates to <code class="text-sky-300">/topic/auctions/{id}</code> and outbid notices to active participants with sub-10ms delivery.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Independent Engine</span>
+            <h4 class="text-base font-semibold text-white mt-1">Scheduled UTC Closer</h4>
+            <p class="text-xs text-slate-400 mt-2">Independent background cron runs every 5 seconds, evaluating server UTC timestamps to transition auctions to awaiting seller approval or unsold.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. DATABASE SCHEMA SECTION -->
+    <section id="content-database" class="hidden space-y-6">
+      <div class="glass-panel p-6 rounded-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span>🗄️ Physical Database Schema</span>
+              <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-mono">PostgreSQL 17 / Flyway V1</span>
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">Physical table structures, decimal monetary precision (<code class="text-orange-400">NUMERIC(12,2)</code>), and foreign key integrity.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleViewMode('db', 'vector')" id="btn-db-vector" class="px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold">Mermaid Vector</button>
+            <button onclick="toggleViewMode('db', 'image')" id="btn-db-image" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">Rendered PNG</button>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div id="db-view-vector" class="mermaid">
+classDiagram
+    direction TB
+
+    class users {
+        +BIGINT id PK
+        +VARCHAR(100) name
+        +VARCHAR(150) email UNIQUE
+        +VARCHAR(255) password_hash
+        +VARCHAR(30) campus_verification_status
+        +VARCHAR(20) role
+        +VARCHAR(50) student_id
+        +VARCHAR(30) phone_number
+        +TIMESTAMPTZ created_at
+        +TIMESTAMPTZ updated_at
+    }
+
+    class listings {
+        +BIGINT id PK
+        +BIGINT seller_id FK
+        +VARCHAR(200) title
+        +VARCHAR(50) category
+        +TEXT description
+        +VARCHAR(30) condition
+        +NUMERIC(12,2) starting_price
+        +NUMERIC(12,2) minimum_bid_increment
+        +NUMERIC(12,2) current_highest_bid
+        +BIGINT leading_bidder_id FK
+        +INT bid_count
+        +TIMESTAMPTZ closing_at
+        +VARCHAR(40) status
+        +TEXT cancellation_reason
+        +TIMESTAMPTZ created_at
+        +TIMESTAMPTZ updated_at
+        +TIMESTAMPTZ closed_at
+    }
+
+    class listing_images {
+        +BIGINT id PK
+        +BIGINT listing_id FK
+        +VARCHAR(500) image_url
+        +INT display_order
+    }
+
+    class bids {
+        +BIGINT id PK
+        +BIGINT listing_id FK
+        +BIGINT bidder_id FK
+        +NUMERIC(12,2) amount
+        +TIMESTAMPTZ created_at
+    }
+
+    class auction_outcomes {
+        +BIGINT id PK
+        +BIGINT listing_id FK UNIQUE
+        +BIGINT provisional_winner_id FK
+        +BIGINT winning_bid_id FK
+        +VARCHAR(40) final_status
+        +VARCHAR(30) seller_decision
+        +TEXT decision_reason
+        +TIMESTAMPTZ decided_at
+        +TIMESTAMPTZ completed_at
+    }
+
+    class handovers {
+        +BIGINT id PK
+        +BIGINT listing_id FK UNIQUE
+        +BOOLEAN seller_confirmation
+        +BOOLEAN winner_confirmation
+        +TIMESTAMPTZ seller_confirmed_at
+        +TIMESTAMPTZ winner_confirmed_at
+        +VARCHAR(40) outcome
+        +TEXT failure_reason
+        +TIMESTAMPTZ completed_at
+    }
+
+    class notifications {
+        +BIGINT id PK
+        +BIGINT recipient_id FK
+        +VARCHAR(50) event_type
+        +VARCHAR(200) title
+        +TEXT message
+        +BIGINT related_listing_id FK
+        +TIMESTAMPTZ created_at
+        +TIMESTAMPTZ read_at
+    }
+
+    class audit_events {
+        +BIGINT id PK
+        +BIGINT listing_id FK
+        +BIGINT actor_id FK
+        +VARCHAR(60) event_type
+        +TEXT event_details
+        +TIMESTAMPTZ created_at
+    }
+
+    users "1" --> "*" listings : seller_id
+    users "1" --> "*" bids : bidder_id
+    users "1" --> "*" notifications : recipient_id
+    listings "1" --> "*" listing_images : listing_id
+    listings "1" --> "*" bids : listing_id
+    listings "1" --> "0..1" auction_outcomes : listing_id
+    listings "1" --> "0..1" handovers : listing_id
+    listings "1" --> "*" audit_events : listing_id
+          </div>
+
+          <div id="db-view-image" class="hidden">
+            <div class="rounded-xl border border-slate-700 overflow-hidden bg-slate-900 p-2 flex justify-center">
+              <img src="database_diagram.png" alt="Database Diagram" class="max-w-full h-auto rounded-lg shadow-2xl">
+            </div>
+          </div>
+        </div>
+
+        <!-- Index Table -->
+        <div class="mt-8">
+          <h3 class="text-base font-bold text-white mb-3">⚡ Production B-Tree Indexes</h3>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="bg-slate-900/80 text-slate-300 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Index Name</th>
+                  <th class="p-3">Table</th>
+                  <th class="p-3">Indexed Columns</th>
+                  <th class="p-3">Optimization Target</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-400">
+                <tr>
+                  <td class="p-3 text-orange-400">idx_listings_status_closing</td>
+                  <td class="p-3">listings</td>
+                  <td class="p-3">(status, closing_at)</td>
+                  <td class="p-3 text-slate-300">Sub-millisecond auto-closing engine polling</td>
+                </tr>
+                <tr>
+                  <td class="p-3 text-orange-400">idx_listings_category_status</td>
+                  <td class="p-3">listings</td>
+                  <td class="p-3">(category, status)</td>
+                  <td class="p-3 text-slate-300">Marketplace category filtering & sort</td>
+                </tr>
+                <tr>
+                  <td class="p-3 text-orange-400">idx_bids_listing_amount</td>
+                  <td class="p-3">bids</td>
+                  <td class="p-3">(listing_id, amount DESC)</td>
+                  <td class="p-3 text-slate-300">Instant highest bid lookup & bid history</td>
+                </tr>
+                <tr>
+                  <td class="p-3 text-orange-400">idx_notifications_recipient</td>
+                  <td class="p-3">notifications</td>
+                  <td class="p-3">(recipient_id, created_at DESC)</td>
+                  <td class="p-3 text-slate-300">Student real-time inbox & badge count</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ER DIAGRAM SECTION -->
+    <section id="content-er" class="hidden space-y-6">
+      <div class="glass-panel p-6 rounded-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span>📊 Entity-Relationship (ER) Diagram</span>
+              <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-mono">8 Entities / Referential Integrity</span>
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">Entity cardinalities, primary/foreign keys, unique constraints, and cascade delete rules.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleViewMode('er', 'vector')" id="btn-er-vector" class="px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold">Mermaid Vector</button>
+            <button onclick="toggleViewMode('er', 'image')" id="btn-er-image" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">Rendered PNG</button>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div id="er-view-vector" class="mermaid">
+erDiagram
+    USERS ||--o{ LISTINGS : "creates/sells"
+    USERS ||--o{ BIDS : "places"
+    USERS ||--o{ NOTIFICATIONS : "receives"
+    USERS ||--o{ AUDIT_EVENTS : "triggers"
+    USERS ||--o{ AUCTION_OUTCOMES : "wins as provisional"
+    
+    LISTINGS ||--o{ LISTING_IMAGES : "has photos (CASCADE)"
+    LISTINGS ||--o{ BIDS : "accumulates (append-only)"
+    LISTINGS ||--o| AUCTION_OUTCOMES : "produces outcome (1-to-1)"
+    LISTINGS ||--o| HANDOVERS : "tracks physical transfer (1-to-1)"
+    LISTINGS ||--o{ NOTIFICATIONS : "generates notifications"
+    LISTINGS ||--o{ AUDIT_EVENTS : "audit trail"
+    LISTINGS }o--|| USERS : "leads as highest bidder"
+    
+    BIDS ||--o| AUCTION_OUTCOMES : "referenced as winning bid"
+
+    USERS {
+        bigserial id PK
+        varchar(100) name
+        varchar(150) email UK
+        varchar(255) password_hash
+        varchar(30) campus_verification_status
+        varchar(20) role
+        varchar(50) student_id
+        varchar(30) phone_number
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    LISTINGS {
+        bigserial id PK
+        bigint seller_id FK
+        varchar(200) title
+        varchar(50) category
+        text description
+        varchar(30) condition
+        numeric(12_2) starting_price
+        numeric(12_2) minimum_bid_increment
+        numeric(12_2) current_highest_bid
+        bigint leading_bidder_id FK
+        int bid_count
+        timestamptz closing_at
+        varchar(40) status
+        text cancellation_reason
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz closed_at
+    }
+
+    LISTING_IMAGES {
+        bigserial id PK
+        bigint listing_id FK
+        varchar(500) image_url
+        int display_order
+    }
+
+    BIDS {
+        bigserial id PK
+        bigint listing_id FK
+        bigint bidder_id FK
+        numeric(12_2) amount
+        timestamptz created_at
+    }
+
+    AUCTION_OUTCOMES {
+        bigserial id PK
+        bigint listing_id FK_UK
+        bigint provisional_winner_id FK
+        bigint winning_bid_id FK
+        varchar(40) final_status
+        varchar(30) seller_decision
+        text decision_reason
+        timestamptz decided_at
+        timestamptz completed_at
+    }
+
+    HANDOVERS {
+        bigserial id PK
+        bigint listing_id FK_UK
+        boolean seller_confirmation
+        boolean winner_confirmation
+        timestamptz seller_confirmed_at
+        timestamptz winner_confirmed_at
+        varchar(40) outcome
+        text failure_reason
+        timestamptz completed_at
+    }
+
+    NOTIFICATIONS {
+        bigserial id PK
+        bigint recipient_id FK
+        varchar(50) event_type
+        varchar(200) title
+        text message
+        bigint related_listing_id FK
+        timestamptz created_at
+        timestamptz read_at
+    }
+
+    AUDIT_EVENTS {
+        bigserial id PK
+        bigint listing_id FK
+        bigint actor_id FK
+        varchar(60) event_type
+        text event_details
+        timestamptz created_at
+    }
+          </div>
+
+          <div id="er-view-image" class="hidden">
+            <div class="rounded-xl border border-slate-700 overflow-hidden bg-slate-900 p-2 flex justify-center">
+              <img src="ER_diagram.png" alt="ER Diagram" class="max-w-full h-auto rounded-lg shadow-2xl">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WORKFLOWS & CONCURRENCY SECTION -->
+    <section id="content-workflows" class="hidden space-y-6">
+      <div class="glass-panel p-6 rounded-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span>🔄 Workflows & State Machines</span>
+              <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-mono">Finite State Machine & Lock Flow</span>
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">Interactive state transitions, race-condition serialization, and dual-party confirmation.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleViewMode('wf', 'vector')" id="btn-wf-vector" class="px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold">Mermaid Vector</button>
+            <button onclick="toggleViewMode('wf', 'image')" id="btn-wf-image" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">Rendered PNG</button>
+          </div>
+        </div>
+
+        <!-- Workflow Sub-tabs -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          <button onclick="switchWorkflowSubTab('state')" id="subtab-state" class="px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold">1. Auction State Machine</button>
+          <button onclick="switchWorkflowSubTab('concurrency')" id="subtab-concurrency" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">2. Concurrent Bidding Sequence</button>
+          <button onclick="switchWorkflowSubTab('closer')" id="subtab-closer" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">3. Auto-Closing Engine</button>
+          <button onclick="switchWorkflowSubTab('handover')" id="subtab-handover" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">4. Campus Handover Flow</button>
+        </div>
+
+        <div class="mt-6">
+          <!-- State Machine -->
+          <div id="wf-subcontent-state" class="space-y-4">
+            <div id="wf-view-vector" class="mermaid">
+stateDiagram-v2
+    [*] --> DRAFT : Seller drafts listing
+    DRAFT --> OPEN : Seller publishes listing (validates closing time > now + 5m)
+    
+    OPEN --> OPEN : Valid bid accepted (atomically updates leading bid & bidder)
+    OPEN --> CANCELLED : Seller cancels auction (allowed only before close, bid history preserved)
+    
+    state "Closing Boundary (UTC Clock)" as ClosingRule
+    OPEN --> ClosingRule : closing_at <= NOW()
+    
+    ClosingRule --> UNSOLD : 0 accepted bids placed
+    ClosingRule --> AWAITING_SELLER_APPROVAL : Has >= 1 accepted bid (Provisional winner assigned)
+    
+    AWAITING_SELLER_APPROVAL --> SELLER_REJECTED : Seller rejects reserve price (with optional reason)
+    AWAITING_SELLER_APPROVAL --> RESERVED : Seller approves winning bid (Handover record initialized)
+    
+    state "Campus Handover Verification" as HandoverState
+    RESERVED --> HandoverState : Physical exchange coordination
+    
+    HandoverState --> SOLD : Dual confirmation (Both Seller & Winner confirm exchange)
+    HandoverState --> PICKUP_FAILED : Either party reports verified pickup failure
+    
+    UNSOLD --> [*]
+    CANCELLED --> [*]
+    SELLER_REJECTED --> [*]
+    SOLD --> [*]
+    PICKUP_FAILED --> [*]
+            </div>
+
+            <div id="wf-view-image" class="hidden">
+              <div class="rounded-xl border border-slate-700 overflow-hidden bg-slate-900 p-2 flex justify-center">
+                <img src="workflow_diagram.png" alt="Workflow State Machine Diagram" class="max-w-full h-auto rounded-lg shadow-2xl">
+              </div>
+            </div>
+          </div>
+
+          <!-- Concurrency Sequence -->
+          <div id="wf-subcontent-concurrency" class="hidden space-y-4">
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor BidderA as Junior Student A ($525.00)
+    actor BidderB as Junior Student B ($525.00)
+    participant API as BidController
+    participant Service as BiddingService
+    participant Repo as ListingRepository
+    participant DB as PostgreSQL 17 (Pessimistic Lock)
+    participant WS as WebSocket STOMP Broker
+    participant OutbidUser as Previous Leading Bidder
+
+    Note over BidderA,BidderB: Both click 'Place Secure Bid' at the exact same millisecond
+
+    par Thread A
+        BidderA->>API: POST /api/listings/4/bids { amount: 525.00 }
+        API->>Service: placeBid(listingId=4, amount=525.00, userA)
+        Service->>Repo: findByIdWithPessimisticLock(4)
+        Repo->>DB: SELECT * FROM listings WHERE id=4 FOR UPDATE
+        activate DB
+        Note over DB: Lock granted to Thread A
+    and Thread B
+        BidderB->>API: POST /api/listings/4/bids { amount: 525.00 }
+        API->>Service: placeBid(listingId=4, amount=525.00, userB)
+        Service->>Repo: findByIdWithPessimisticLock(4)
+        Repo->>DB: SELECT * FROM listings WHERE id=4 FOR UPDATE
+        Note over DB: Thread B waits on row lock
+    end
+
+    Note over Service: Validates: User != Seller, Status == OPEN, Now < ClosingAt, Amount >= MinAcceptable ($525 >= $525)
+    Service->>DB: INSERT INTO bids (listing_id, bidder_id, amount, created_at)
+    Service->>DB: UPDATE listings SET current_highest_bid=525.00, leading_bidder_id=A, bid_count=bid_count+1
+    Service->>DB: COMMIT TRANSACTION
+    deactivate DB
+    Note over DB: Thread A commits. Lock released to Thread B
+
+    Service->>WS: Broadcast to /topic/auctions/4/bids & /topic/auctions/4
+    Service->>OutbidUser: Push Outbid notification
+    Service-->>BidderA: 201 Created { success: true, bid: 525.00, status: LEADING }
+
+    activate DB
+    Note over DB: Lock granted to Thread B. Reads committed state (current_highest_bid = 525.00)
+    Service->>DB: Re-read listing state inside transaction
+    Note over Service: Re-evaluates increment rule: MinAcceptable is now $550.00 ($525 + $25 increment)
+    Note over Service: Validation Fails: $525.00 < $550.00
+    Service->>DB: ROLLBACK TRANSACTION
+    deactivate DB
+    Service-->>BidderB: 422 Unprocessable Entity ("Bid of $525.00 is below minimum required bid of $550.00")
+            </div>
+          </div>
+
+          <!-- Auto-Closing Flow -->
+          <div id="wf-subcontent-closer" class="hidden space-y-4">
+            <div class="mermaid">
+flowchart TD
+    Start([Scheduled Execution Every 5 Seconds]) --> Query[Query DB: SELECT id FROM listings WHERE status = 'OPEN' AND closing_at <= NOW]
+    Query --> CheckListings{Any Expired Listings Found?}
+    
+    CheckListings -- No --> Sleep([Wait 5s for Next Tick])
+    CheckListings -- Yes --> ForEach[Iterate through Expired Listings]
+    
+    ForEach --> AcquireLock[Acquire Pessimistic Lock on Listing Row]
+    AcquireLock --> IdempotencyCheck{Outcome Already Exists\nor Status != OPEN?}
+    
+    IdempotencyCheck -- Yes --> Skip[Skip Processing to Guarantee Idempotency]
+    IdempotencyCheck -- No --> CheckBids{Count of Accepted Bids > 0?}
+    
+    CheckBids -- No (0 Bids) --> MarkUnsold[Set listing.status = UNSOLD\nSet listing.closed_at = NOW]
+    MarkUnsold --> SaveUnsoldOutcome[Create AuctionOutcome: final_status = UNSOLD]
+    SaveUnsoldOutcome --> NotifySellerUnsold[Notify Seller: Item Ended Unsold]
+    NotifySellerUnsold --> BroadcastUnsold[Broadcast WebSocket Update]
+    
+    CheckBids -- Yes (>= 1 Bid) --> FindHighest[Query BidRepository for Highest Bid]
+    FindHighest --> MarkPendingApproval[Set listing.status = AWAITING_SELLER_APPROVAL\nAssign provisional_winner]
+    MarkPendingApproval --> SaveApprovalOutcome[Create AuctionOutcome: provisional_winner, winning_bid]
+    SaveApprovalOutcome --> NotifyParties[Notify Seller: Winning Bid Awaiting Approval\nNotify Winner: You Won the Bidding!]
+    NotifyParties --> BroadcastApproval[Broadcast WebSocket Update]
+    
+    Skip --> NextItem{More Expired Items?}
+    BroadcastUnsold --> NextItem
+    BroadcastApproval --> NextItem
+    
+    NextItem -- Yes --> ForEach
+    NextItem -- No --> Sleep
+            </div>
+          </div>
+
+          <!-- Handover Flow -->
+          <div id="wf-subcontent-handover" class="hidden space-y-4">
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Seller as Senior Seller
+    actor Buyer as Winning Junior Buyer
+    participant API as HandoverController
+    participant Service as HandoverService
+    participant DB as PostgreSQL (handovers table)
+    participant WS as WebSocket STOMP
+
+    Note over Seller,Buyer: Auction closed with accepted bids. Seller reviews offer.
+    Seller->>API: POST /api/listings/{id}/approve-winner
+    API->>Service: handleSellerDecision(listingId, approved=true)
+    Service->>DB: UPDATE listings SET status = 'RESERVED'
+    Service->>DB: INSERT INTO handovers (listing_id, outcome='PENDING')
+    Service->>WS: Broadcast status 'RESERVED'
+    Service->>Buyer: Notify: 'Seller Approved! Coordinate Campus Handover'
+
+    Note over Seller,Buyer: Students meet in-person on campus (library/hostel) & exchange item
+
+    Seller->>API: POST /api/listings/{id}/confirm-handover
+    API->>Service: confirmHandover(listingId, user=Seller)
+    Service->>DB: UPDATE handovers SET seller_confirmation=true, seller_confirmed_at=NOW
+    Service-->>Seller: 200 OK (Seller Confirmed: YES, Buyer Confirmed: PENDING)
+
+    Buyer->>API: POST /api/listings/{id}/confirm-handover
+    API->>Service: confirmHandover(listingId, user=Buyer)
+    Service->>DB: UPDATE handovers SET winner_confirmation=true, winner_confirmed_at=NOW
+    Note over Service: Both parties confirmed! Finalize sale
+    Service->>DB: UPDATE handovers SET outcome='COMPLETED', completed_at=NOW
+    Service->>DB: UPDATE listings SET status='SOLD', closed_at=NOW
+    Service->>DB: UPDATE auction_outcomes SET final_status='SOLD'
+    Service->>WS: Broadcast status 'SOLD'
+    Service->>Seller: Notify: 'Sale Complete: Both Parties Confirmed'
+    Service->>Buyer: Notify: 'Purchase Complete: Enjoy your item!'
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500 font-mono">
+    Campus Auction Platform • Technical Visualization Suite • Generated for High-Concurrency Production Review
+  </footer>
+
+  <!-- Script for Navigation & Toggles -->
+  <script>
+    function switchTab(tabId) {
+      const tabs = ['architecture', 'database', 'er', 'workflows'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        const content = document.getElementById('content-' + t);
+        if (t === tabId) {
+          btn.classList.add('active');
+          content.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleViewMode(section, mode) {
+      const vectorEl = document.getElementById(section + '-view-vector');
+      const imageEl = document.getElementById(section + '-view-image');
+      const btnVector = document.getElementById('btn-' + section + '-vector');
+      const btnImage = document.getElementById('btn-' + section + '-image');
+
+      if (mode === 'vector') {
+        vectorEl.classList.remove('hidden');
+        imageEl.classList.add('hidden');
+        btnVector.className = 'px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold';
+        btnImage.className = 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold';
+      } else {
+        vectorEl.classList.add('hidden');
+        imageEl.classList.remove('hidden');
+        btnVector.className = 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold';
+        btnImage.className = 'px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold';
+      }
+    }
+
+    function switchWorkflowSubTab(subTabId) {
+      const subTabs = ['state', 'concurrency', 'closer', 'handover'];
+      subTabs.forEach(st => {
+        const btn = document.getElementById('subtab-' + st);
+        const content = document.getElementById('wf-subcontent-' + st);
+        if (st === subTabId) {
+          btn.className = 'px-3 py-1.5 rounded-lg bg-orange-600 text-white text-xs font-semibold';
+          content.classList.remove('hidden');
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold';
+          content.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

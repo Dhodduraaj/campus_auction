@@ -44,6 +44,10 @@ public class AuthService {
             throw new BadRequestException("An account with this email address already exists.");
         }
 
+        if (request.getRole() != Role.JUNIOR && request.getRole() != Role.SENIOR) {
+            throw new BadRequestException("Registration requires selecting either JUNIOR or SENIOR role.");
+        }
+
         // Campus domain verification check
         CampusVerificationStatus verificationStatus = determineCampusVerification(cleanEmail);
 
@@ -51,7 +55,7 @@ public class AuthService {
                 .name(request.getName().trim())
                 .email(cleanEmail)
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .role(Role.STUDENT)
+                .role(request.getRole())
                 .campusVerificationStatus(verificationStatus)
                 .studentId(request.getStudentId() != null ? request.getStudentId().trim() : null)
                 .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber().trim() : null)

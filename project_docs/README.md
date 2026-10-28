@@ -4,17 +4,27 @@ This directory contains comprehensive visual models, database schemas, ER models
 
 ---
 
-## 📑 Diagram Directory Index
+## 🚀 Interactive Visualizer Suite
 
-| Diagram Document | Description | Key Focus Areas |
-|---|---|---|
-| [**Architecture Diagram**](file:///d:/study/GitHub/campus_auction/project-docs/architecture_diagram.md) | High-level and component system architecture | Three-tier decoupling, Spring Security JWT filter, STOMP WebSocket broker, PostgreSQL 17, and Vite proxy. |
-| [**Entity-Relationship (ER) Diagram**](file:///d:/study/GitHub/campus_auction/project-docs/er_diagram.md) | Relational entity-relationship model | Complete Mermaid ER diagram of all 8 entities, cardinalities, primary/foreign keys, and cascade rules. |
-| [**Database Schema Diagram**](file:///d:/study/GitHub/campus_auction/project-docs/database_diagram.md) | Physical database schema & index design | Table definitions, numeric precision (`NUMERIC(12,2)`), B-tree performance index specs, and row locking. |
-| [**Workflow & State Machine Diagrams**](file:///d:/study/GitHub/campus_auction/project-docs/workflow_diagrams.md) | Interactive business logic & lifecycle flows | Auction lifecycle state machine, atomic concurrent bidding sequence, auto-closing engine, and dual-party handover verification. |
+You can view all diagrams rendered with interactive vector SVG, dark/light themes, zoom, and high-res image previews by opening:
+👉 [**Interactive Diagram Viewer (`index.html`)**](file:///d:/study/GitHub/campus_auction/project_docs/index.html) (Open in any modern browser)
 
 ---
 
-## 🛠️ Diagram Rendering
+## 📑 Diagram Directory Index
 
-All diagrams in this directory are written using standard **GitHub-Flavored Markdown Mermaid (`mermaid`)** blocks. They render natively on GitHub, in IDE markdown previewers (Antigravity, VS Code, Cursor), and inside documentation generators.
+| Diagram Category | Markdown Document | Visual Asset (PNG) | Key Architectural Highlights |
+|---|---|---|---|
+| **System Architecture** | [architecture_diagram.md](file:///d:/study/GitHub/campus_auction/project_docs/architecture_diagram.md) | [architecture_diagram.png](file:///d:/study/GitHub/campus_auction/project_docs/architecture_diagram.png) | 3-tier decoupling (React 19 / Spring Boot 3.3.4 / PostgreSQL 17), Spring Security JWT filter, STOMP WebSocket broker, HikariCP connection pool, and Vite proxy. |
+| **Database Schema** | [database_diagram.md](file:///d:/study/GitHub/campus_auction/project_docs/database_diagram.md) | [database_diagram.png](file:///d:/study/GitHub/campus_auction/project_docs/database_diagram.png) | PostgreSQL 17 table layout, `NUMERIC(12,2)` monetary precision, 9 B-tree performance indexes, and pessimistic locking query structure (`FOR UPDATE`). |
+| **Entity-Relationship (ER)** | [er_diagram.md](file:///d:/study/GitHub/campus_auction/project_docs/er_diagram.md) | [ER_diagram.png](file:///d:/study/GitHub/campus_auction/project_docs/ER_diagram.png) | Relational model of all 8 entities (`users`, `listings`, `listing_images`, `bids`, `auction_outcomes`, `handovers`, `notifications`, `audit_events`), cardinalities, and foreign keys. |
+| **Workflows & State Machines** | [workflow_diagrams.md](file:///d:/study/GitHub/campus_auction/project_docs/workflow_diagrams.md) | [workflow_diagram.png](file:///d:/study/GitHub/campus_auction/project_docs/workflow_diagram.png) | 4 core flows: (1) Auction finite state machine, (2) Concurrent bidding lock serialization sequence, (3) Automated 5s scheduled closing engine flowchart, and (4) Dual-party campus handover sequence. |
+
+---
+
+## 🛠️ Diagram Rendering Formats
+
+Every diagram is provided in dual formats:
+1. **GitHub-Flavored Markdown Mermaid (`mermaid`)**: Renders natively directly inside GitHub, VS Code, Cursor, and markdown preview tools.
+2. **High-Resolution PNG Assets**: Ready for inclusion in slide decks, project reports, and system design reviews.
+3. **Standalone HTML Dashboard**: [index.html](file:///d:/study/GitHub/campus_auction/project_docs/index.html) powered by Tailwind CSS and Mermaid.js with one-click toggling between vector SVG and high-resolution PNG modes.

@@ -8,6 +8,11 @@ This document models the business logic, state machines, concurrency handling, a
 
 The auction lifecycle is modeled as a deterministic finite-state machine to prevent invalid status transitions and race conditions:
 
+### 1.1 Rendered Visual State Machine Diagram
+![Auction Lifecycle State Machine Diagram](./workflow_diagram.png)
+
+### 1.2 Interactive Mermaid State Machine Specification
+
 ```mermaid
 stateDiagram-v2
     [*] --> DRAFT : Seller drafts listing

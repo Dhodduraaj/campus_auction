@@ -1,7 +1,9 @@
 package com.campusauction.auth.dto;
 
+import com.campusauction.common.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +27,9 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 100, message = "Password must be at least 6 characters")
     private String password;
+
+    @NotNull(message = "Account role is required (JUNIOR or SENIOR)")
+    private Role role;
 
     private String studentId;
     private String phoneNumber;

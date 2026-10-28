@@ -119,8 +119,8 @@ public class AuctionClosingScheduler {
             notificationService.createNotification(
                     listing.getSeller(),
                     NotificationType.AUCTION_CLOSED,
-                    "Auction Ended: Highest Bid $" + winningBid.getAmount(),
-                    "Bidding has closed for '" + listing.getTitle() + "'. Winning price is $" + winningBid.getAmount() + ". Please review and approve or reject the sale.",
+                    "Auction Ended: Highest Bid ₹" + winningBid.getAmount(),
+                    "Bidding has closed for '" + listing.getTitle() + "'. Winning price is ₹" + winningBid.getAmount() + ". Please review and approve or reject the sale.",
                     listing
             );
 
@@ -129,12 +129,12 @@ public class AuctionClosingScheduler {
                     provisionalWinner,
                     NotificationType.PROVISIONAL_WINNER,
                     "You Won the Bidding! Pending Seller Approval",
-                    "Congratulations! Your bid of $" + winningBid.getAmount() + " won the auction for '" + listing.getTitle() + "'. Awaiting seller's final confirmation.",
+                    "Congratulations! Your bid of ₹" + winningBid.getAmount() + " won the auction for '" + listing.getTitle() + "'. Awaiting seller's final confirmation.",
                     listing
             );
 
-            auditService.recordEvent(listing, provisionalWinner, "AUCTION_CLOSED_PENDING_APPROVAL", "Winning bid: $" + winningBid.getAmount());
-            log.info("Auction {} closed with winning bid ${}. Awaiting seller approval.", listing.getId(), winningBid.getAmount());
+            auditService.recordEvent(listing, provisionalWinner, "AUCTION_CLOSED_PENDING_APPROVAL", "Winning bid: ₹" + winningBid.getAmount());
+            log.info("Auction {} closed with winning bid ₹{}. Awaiting seller approval.", listing.getId(), winningBid.getAmount());
         }
 
         // Real-time broadcast

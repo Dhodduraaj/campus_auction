@@ -47,7 +47,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .email("rohan.sharma@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
-                .role(Role.STUDENT)
+                .role(Role.SENIOR)
                 .studentId("SEN-2022-CS-041")
                 .phoneNumber("+91 98765 43210")
                 .build();
@@ -57,7 +57,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .email("ananya.iyer@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
-                .role(Role.STUDENT)
+                .role(Role.SENIOR)
                 .studentId("SEN-2022-EE-019")
                 .phoneNumber("+91 98765 43211")
                 .build();
@@ -67,7 +67,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .email("karthik.verma@campus.edu")
                 .passwordHash(passwordEncoder.encode("password123"))
                 .campusVerificationStatus(CampusVerificationStatus.VERIFIED)
-                .role(Role.STUDENT)
+                .role(Role.JUNIOR)
                 .studentId("JUN-2024-ME-085")
                 .phoneNumber("+91 98765 43212")
                 .build();

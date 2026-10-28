@@ -4,7 +4,8 @@ import { handoverService } from '../services/handoverService';
 import { ListingCard } from '../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { CountdownTimer } from '../components/ui/CountdownTimer';
-import { Plus, Check, X, Handshake, AlertTriangle, Eye, ArrowLeft } from 'lucide-react';
+import { formatCurrency } from '../utils/currency';
+import { Plus, Check, X, Handshake, Eye } from 'lucide-react';
 
 interface MyListingsPageProps {
   onNavigate: (page: string, params?: any) => void;
@@ -32,7 +33,7 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
   }, []);
 
   const handleApprove = async (id: number) => {
-    if (!window.confirm('Approve this winning bid? The item will be reserved for the winning student.')) return;
+    if (!window.confirm('Approve this winning bid? The item will be reserved.')) return;
     setActionLoadingId(id);
     try {
       await handoverService.approveWinner(id);
@@ -45,7 +46,7 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
   };
 
   const handleReject = async (id: number) => {
-    const reason = window.prompt('Specify reason for rejecting this reserve price:', 'Reserve price not met');
+    const reason = window.prompt('Reason for rejecting:', 'Reserve price not met');
     if (reason === null) return;
     setActionLoadingId(id);
     try {
@@ -59,7 +60,7 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
   };
 
   const handleConfirmHandover = async (id: number) => {
-    if (!window.confirm('Confirm that you have handed over the item to the winning student on campus?')) return;
+    if (!window.confirm('Confirm in-person handover on campus?')) return;
     setActionLoadingId(id);
     try {
       await handoverService.confirmHandover(id);
@@ -72,7 +73,7 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
   };
 
   const handleCancelAuction = async (id: number) => {
-    const reason = window.prompt('Reason for cancelling this auction:');
+    const reason = window.prompt('Reason for cancelling auction:');
     if (!reason) return;
     setActionLoadingId(id);
     try {
@@ -87,56 +88,55 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="font-display font-black text-3xl text-slate-900 tracking-tight">
-            My Auction Listings
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
+            My Listings
           </h1>
-          <p className="text-xs text-slate-500 font-mono mt-1">
-            Manage your listed items, review winning bids, and confirm student handovers.
-          </p>
         </div>
 
         <button
           onClick={() => onNavigate('create-listing')}
-          className="inline-flex items-center gap-1.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded shadow-sm"
+          className="inline-flex items-center gap-1.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded shadow-sm transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>List Another Item</span>
+          <span>Create Listing</span>
         </button>
       </div>
 
       {loading ? (
         <div className="space-y-4 animate-pulse">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="h-24 bg-slate-200 rounded-lg"></div>
+            <div key={n} className="h-24 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-16 text-center space-y-4">
-          <p className="font-display font-bold text-lg text-slate-900">You haven't listed any items yet</p>
-          <p className="text-xs text-slate-500 font-mono">
-            Got an extra cycle, textbook, or electronics before semester end? List it now!
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-14 text-center space-y-3">
+          <p className="font-display font-bold text-base text-slate-900 dark:text-white">
+            No active listings found
           </p>
           <button
             onClick={() => onNavigate('create-listing')}
-            className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase px-4 py-2 rounded"
+            className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase px-4 py-2 rounded transition-colors"
           >
-            Create Your First Listing
+            Create Listing
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {listings.map((item) => (
             <div
               key={item.id}
-              className="bg-white border border-slate-200 rounded-lg p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
             >
               {/* Item Info */}
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-16 h-16 rounded bg-slate-100 border border-slate-200 flex-shrink-0 overflow-hidden">
+                <div className="w-16 h-16 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-shrink-0 overflow-hidden">
                   <img
-                    src={item.primaryImageUrl || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=200&q=80'}
+                    src={
+                      item.primaryImageUrl ||
+                      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=200&q=80'
+                    }
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -148,25 +148,32 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
                   </div>
                   <h3
                     onClick={() => onNavigate('listing-detail', { id: item.id })}
-                    className="font-display font-bold text-base text-slate-900 truncate hover:text-orange-600 cursor-pointer mt-1"
+                    className="font-display font-bold text-base text-slate-900 dark:text-white truncate hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer mt-1"
                   >
                     {item.title}
                   </h3>
-                  <div className="flex items-center gap-3 text-xs font-mono text-slate-500 mt-0.5">
-                    <span>Current: <strong className="text-slate-900">${item.currentHighestBid.toFixed(2)}</strong></span>
+                  <div className="flex items-center gap-3 text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                    <span>
+                      Current:{' '}
+                      <strong className="text-slate-900 dark:text-white">
+                        {formatCurrency(item.currentHighestBid)}
+                      </strong>
+                    </span>
                     <span>•</span>
-                    <span>{item.bidCount} {item.bidCount === 1 ? 'bid' : 'bids'}</span>
+                    <span>
+                      {item.bidCount} {item.bidCount === 1 ? 'bid' : 'bids'}
+                    </span>
                     <span>•</span>
                     <CountdownTimer closingAt={item.closingAt} size="sm" />
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons depending on lifecycle */}
-              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
                 <button
                   onClick={() => onNavigate('listing-detail', { id: item.id })}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   <Eye className="w-3.5 h-3.5" /> Details
                 </button>
@@ -178,7 +185,7 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
                       onClick={() => handleApprove(item.id)}
                       className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase rounded bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
                     >
-                      <Check className="w-3.5 h-3.5" /> Approve Winner
+                      <Check className="w-3.5 h-3.5" /> Approve
                     </button>
                     <button
                       disabled={actionLoadingId === item.id}
@@ -204,9 +211,9 @@ export const MyListingsPage: React.FC<MyListingsPageProps> = ({ onNavigate }) =>
                   <button
                     disabled={actionLoadingId === item.id}
                     onClick={() => handleCancelAuction(item.id)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold uppercase rounded text-slate-500 hover:text-red-600 hover:bg-red-50"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold uppercase rounded text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
                   >
-                    Cancel Auction
+                    Cancel
                   </button>
                 )}
               </div>

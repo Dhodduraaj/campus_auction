@@ -55,7 +55,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
   if (time.isExpired) {
     return (
-      <span className="inline-flex items-center gap-1 font-mono text-xs font-semibold uppercase text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+      <span className="inline-flex items-center gap-1 font-mono text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
         Auction Ended
       </span>
     );
@@ -67,7 +67,9 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
     return (
       <span
         className={`font-mono font-bold text-xs tracking-tight ${
-          isUrgent ? 'text-red-600' : 'text-slate-800'
+          isUrgent
+            ? 'text-rose-600 dark:text-rose-400'
+            : 'text-slate-800 dark:text-slate-200'
         }`}
       >
         {time.days > 0 && `${time.days}d `}
@@ -81,11 +83,13 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
     <div
       className={`inline-flex items-center gap-1.5 font-mono font-bold ${
         isUrgent
-          ? 'bg-red-50 border border-red-200 text-red-700'
-          : 'bg-slate-100 border border-slate-200 text-slate-900'
+          ? 'bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300'
+          : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'
       } px-2.5 py-1 rounded text-xs`}
     >
-      <span className="text-[10px] uppercase tracking-wider text-slate-500 font-sans font-semibold">Ends:</span>
+      <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans font-semibold">
+        Ends:
+      </span>
       <span>
         {time.days > 0 && <span className="mr-1">{time.days}d</span>}
         <span>{String(time.hours).padStart(2, '0')}h </span>

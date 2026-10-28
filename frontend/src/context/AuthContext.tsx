@@ -8,8 +8,8 @@ interface AuthContextType {
   user: UserSummary | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
-  register: (payload: RegisterPayload) => Promise<void>;
+  login: (payload: LoginPayload) => Promise<UserSummary>;
+  register: (payload: RegisterPayload) => Promise<UserSummary>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -47,23 +47,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const login = async (payload: LoginPayload) => {
+  const login = async (payload: LoginPayload): Promise<UserSummary> => {
     setIsLoading(true);
     try {
       const res = await authService.login(payload);
       setUser(res.user);
       webSocketService.connect();
+      return res.user;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (payload: RegisterPayload) => {
+  const register = async (payload: RegisterPayload): Promise<UserSummary> => {
     setIsLoading(true);
     try {
       const res = await authService.register(payload);
       setUser(res.user);
       webSocketService.connect();
+      return res.user;
     } finally {
       setIsLoading(false);
     }

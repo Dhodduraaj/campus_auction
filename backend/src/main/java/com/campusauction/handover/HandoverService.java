@@ -5,6 +5,7 @@ import com.campusauction.auction.AuctionOutcomeRepository;
 import com.campusauction.audit.AuditService;
 import com.campusauction.common.enums.ListingStatus;
 import com.campusauction.common.enums.NotificationType;
+import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.BadRequestException;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.ResourceNotFoundException;
@@ -40,7 +41,11 @@ public class HandoverService {
         Listing listing = listingRepository.findByIdWithPessimisticLock(listingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Auction listing not found"));
 
-        if (!listing.getSeller().getId().equals(seller.getId())) {
+        if (seller.getRole() != Role.SENIOR && seller.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Senior sellers can approve or reject winning bids.");
+        }
+
+        if (!listing.getSeller().getId().equals(seller.getId()) && seller.getRole() != Role.ADMIN) {
             throw new ForbiddenException("Only the seller of this auction can approve or reject the final sale.");
         }
 
@@ -71,11 +76,11 @@ public class HandoverService {
                     outcome.getProvisionalWinner(),
                     NotificationType.WINNER_APPROVED,
                     "Seller Approved! Item Reserved",
-                    "The seller has approved your winning bid of $" + listing.getCurrentHighestBid() + " for '" + listing.getTitle() + "'. Please coordinate campus handover.",
+                    "The seller has approved your winning bid of ₹" + listing.getCurrentHighestBid() + " for '" + listing.getTitle() + "'. Please coordinate campus handover.",
                     listing
             );
 
-            auditService.recordEvent(listing, seller, "SELLER_APPROVED", "Seller approved winning bid of $" + listing.getCurrentHighestBid());
+            auditService.recordEvent(listing, seller, "SELLER_APPROVED", "Seller approved winning bid of ₹" + listing.getCurrentHighestBid());
         } else {
             // Seller Rejected -> SELLER_REJECTED
             listing.setStatus(ListingStatus.SELLER_REJECTED);
@@ -119,6 +124,14 @@ public class HandoverService {
 
         if (!isSeller && !isWinner) {
             throw new ForbiddenException("Only the seller or the winning buyer can confirm campus item handover.");
+        }
+
+        if (isSeller && currentUser.getRole() != Role.SENIOR && currentUser.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Senior sellers can confirm seller handover.");
+        }
+
+        if (isWinner && currentUser.getRole() != Role.JUNIOR && currentUser.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Junior buyers can confirm buyer handover.");
         }
 
         OffsetDateTime now = OffsetDateTime.now();

@@ -39,7 +39,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
-    private Role role = Role.STUDENT;
+    private Role role = Role.JUNIOR;
 
     @Column(name = "student_id", length = 50)
     private String studentId;

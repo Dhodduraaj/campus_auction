@@ -11,6 +11,11 @@ The system uses a decoupled, three-tier architecture with real-time bidirectiona
 - **Application Tier**: Spring Boot 3.3.4 (Java 21 LTS) REST APIs, Spring Security with stateless JWT, Spring WebSocket with in-memory STOMP broker, and Spring Task Scheduling.
 - **Persistence Tier**: PostgreSQL 17 relational database with Flyway version-controlled schema migrations and HikariCP connection pooling.
 
+### 1.1 Rendered Visual Diagram
+![Campus Auction Platform Architecture Diagram](./architecture_diagram.png)
+
+### 1.2 Interactive Mermaid Architecture Definition
+
 ```mermaid
 graph TB
     subgraph Client_Tier["Client Tier (Frontend - Port 5180)"]

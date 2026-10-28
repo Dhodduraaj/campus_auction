@@ -5,6 +5,7 @@ import com.campusauction.bid.dto.BidDto;
 import com.campusauction.bid.dto.PlaceBidRequest;
 import com.campusauction.common.enums.ListingStatus;
 import com.campusauction.common.enums.NotificationType;
+import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.InvalidBidException;
 import com.campusauction.common.exception.ResourceNotFoundException;
@@ -50,36 +51,41 @@ public class BiddingService {
         Listing listing = listingRepository.findByIdWithPessimisticLock(listingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Auction listing not found with id: " + listingId));
 
-        // 1. Seller cannot bid on own item
+        // 1. Role enforcement: Only Junior accounts can place bids
+        if (bidder.getRole() != Role.JUNIOR && bidder.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Junior accounts can place bids.");
+        }
+
+        // 2. Seller cannot bid on own item
         if (listing.getSeller().getId().equals(bidder.getId())) {
             throw new ForbiddenException("Sellers are strictly prohibited from bidding on their own listings.");
         }
 
-        // 2. Check auction status
+        // 3. Check auction status
         if (listing.getStatus() != ListingStatus.OPEN) {
             throw new InvalidBidException("Auction is not open for bidding. Current status: " + listing.getStatus());
         }
 
-        // 3. Authoritative server timestamp check against closing time
+        // 4. Authoritative server timestamp check against closing time
         OffsetDateTime now = OffsetDateTime.now();
         if (listing.isExpired(now)) {
             throw new InvalidBidException("Auction has already closed. Server time: " + now + ", Closing time: " + listing.getClosingAt());
         }
 
-        // 4. Calculate minimum acceptable bid
+        // 5. Calculate minimum acceptable bid
         BigDecimal minAcceptable = listing.getMinimumAcceptableBid();
 
         if (bidAmount.compareTo(minAcceptable) < 0) {
             String msg = (listing.getBidCount() == 0)
-                    ? "Bid of $" + bidAmount + " is below the starting price of $" + listing.getStartingPrice()
-                    : "Bid of $" + bidAmount + " is below minimum required bid of $" + minAcceptable + " (Current bid: $" + listing.getCurrentHighestBid() + " + increment: $" + listing.getMinimumBidIncrement() + ")";
+                    ? "Bid of ₹" + bidAmount + " is below the starting price of ₹" + listing.getStartingPrice()
+                    : "Bid of ₹" + bidAmount + " is below minimum required bid of ₹" + minAcceptable + " (Current bid: ₹" + listing.getCurrentHighestBid() + " + increment: ₹" + listing.getMinimumBidIncrement() + ")";
             throw new InvalidBidException(msg);
         }
 
-        // 5. Check if user is already leading bidder with same or higher amount
+        // 6. Check if user is already leading bidder with same or higher amount
         User previousLeadingBidder = listing.getLeadingBidder();
 
-        // 6. Create and record append-only Bid
+        // 7. Create and record append-only Bid
         Bid bid = Bid.builder()
                 .listing(listing)
                 .bidder(bidder)
@@ -87,23 +93,23 @@ public class BiddingService {
                 .build();
         Bid savedBid = bidRepository.save(bid);
 
-        // 7. Update listing's atomic state
+        // 8. Update listing's atomic state
         listing.setCurrentHighestBid(bidAmount);
         listing.setLeadingBidder(bidder);
         listing.setBidCount((listing.getBidCount() == null ? 0 : listing.getBidCount()) + 1);
         Listing updatedListing = listingRepository.save(listing);
 
-        // 8. Record audit trail
-        auditService.recordEvent(updatedListing, bidder, "BID_ACCEPTED", "Bid of $" + bidAmount + " accepted.");
+        // 9. Record audit trail
+        auditService.recordEvent(updatedListing, bidder, "BID_ACCEPTED", "Bid of ₹" + bidAmount + " accepted.");
 
-        // 9. Notifications:
+        // 10. Notifications:
         // Outbid notification to previous leader if someone else was leading
         if (previousLeadingBidder != null && !previousLeadingBidder.getId().equals(bidder.getId())) {
             notificationService.createNotification(
                     previousLeadingBidder,
                     NotificationType.OUTBID,
                     "You've been outbid!",
-                    "Another student placed a higher bid of $" + bidAmount + " on '" + listing.getTitle() + "'. Place a new bid to regain the lead!",
+                    "Another student placed a higher bid of ₹" + bidAmount + " on '" + listing.getTitle() + "'. Place a new bid to regain the lead!",
                     updatedListing
             );
         }
@@ -112,8 +118,8 @@ public class BiddingService {
         notificationService.createNotification(
                 listing.getSeller(),
                 NotificationType.BID_RECEIVED,
-                "New Bid Received: $" + bidAmount,
-                "A new leading bid of $" + bidAmount + " was placed on your item '" + listing.getTitle() + "'.",
+                "New Bid Received: ₹" + bidAmount,
+                "A new leading bid of ₹" + bidAmount + " was placed on your item '" + listing.getTitle() + "'.",
                 updatedListing
         );
 

@@ -6,6 +6,11 @@ This document details the relational data model for the **Campus Auction Platfor
 
 ## 1. Complete ER Diagram
 
+### 1.1 Rendered Visual ER Diagram
+![Campus Auction Entity-Relationship Diagram](./ER_diagram.png)
+
+### 1.2 Interactive Mermaid ER Specification
+
 ```mermaid
 erDiagram
     USERS {

@@ -1,4 +1,4 @@
-export type Role = 'STUDENT' | 'ADMIN';
+export type Role = 'JUNIOR' | 'SENIOR' | 'ADMIN';
 export type CampusVerificationStatus = 'UNVERIFIED' | 'VERIFIED' | 'REJECTED';
 
 export type ListingCategory =

@@ -7,6 +7,7 @@ import com.campusauction.common.enums.ItemCondition;
 import com.campusauction.common.enums.ListingCategory;
 import com.campusauction.common.enums.ListingStatus;
 import com.campusauction.common.enums.NotificationType;
+import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.BadRequestException;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.ResourceNotFoundException;
@@ -45,6 +46,10 @@ public class ListingService {
 
     @Transactional
     public ListingDetailDto createListing(CreateListingRequest request, User seller) {
+        if (seller.getRole() != Role.SENIOR && seller.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Senior accounts can create listings.");
+        }
+
         OffsetDateTime now = OffsetDateTime.now();
         if (request.getClosingAt().isBefore(now.plusMinutes(5))) {
             throw new BadRequestException("Auction closing time must be at least 5 minutes in the future.");
@@ -120,10 +125,14 @@ public class ListingService {
 
     @Transactional
     public ListingDetailDto updateListing(Long id, UpdateListingRequest request, User currentUser) {
+        if (currentUser.getRole() != Role.SENIOR && currentUser.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Senior accounts can update listings.");
+        }
+
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Auction listing not found"));
 
-        if (!listing.getSeller().getId().equals(currentUser.getId())) {
+        if (!listing.getSeller().getId().equals(currentUser.getId()) && currentUser.getRole() != Role.ADMIN) {
             throw new ForbiddenException("You are not authorized to edit another student's listing.");
         }
 
@@ -203,10 +212,14 @@ public class ListingService {
 
     @Transactional
     public ListingDetailDto cancelListing(Long id, CancelListingRequest request, User currentUser) {
+        if (currentUser.getRole() != Role.SENIOR && currentUser.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only Senior accounts can cancel listings.");
+        }
+
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Auction listing not found"));
 
-        if (!listing.getSeller().getId().equals(currentUser.getId())) {
+        if (!listing.getSeller().getId().equals(currentUser.getId()) && currentUser.getRole() != Role.ADMIN) {
             throw new ForbiddenException("You are not authorized to cancel another student's listing.");
         }
 

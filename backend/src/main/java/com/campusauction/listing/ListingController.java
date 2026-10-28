@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -75,6 +76,7 @@ public class ListingController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('SENIOR') or hasRole('ADMIN')")
     @Operation(summary = "Create a new auction listing")
     public ResponseEntity<ApiResponse<ListingDetailDto>> createListing(
             @Valid @RequestBody CreateListingRequest request
@@ -86,6 +88,7 @@ public class ListingController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('SENIOR') or hasRole('ADMIN')")
     @Operation(summary = "Update auction listing (restricted if bids exist)")
     public ResponseEntity<ApiResponse<ListingDetailDto>> updateListing(
             @PathVariable Long id,
@@ -97,6 +100,7 @@ public class ListingController {
     }
 
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('SENIOR') or hasRole('ADMIN')")
     @Operation(summary = "Cancel an auction listing")
     public ResponseEntity<ApiResponse<ListingDetailDto>> cancelListing(
             @PathVariable Long id,

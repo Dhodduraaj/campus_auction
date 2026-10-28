@@ -5,6 +5,7 @@ import com.campusauction.bid.dto.PlaceBidRequest;
 import com.campusauction.common.enums.ItemCondition;
 import com.campusauction.common.enums.ListingCategory;
 import com.campusauction.common.enums.ListingStatus;
+import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.InvalidBidException;
 import com.campusauction.listing.Listing;
@@ -45,18 +46,21 @@ class BiddingEngineTests {
                 .name("Senior Student")
                 .email("seller@campus.edu")
                 .passwordHash("hashed")
+                .role(Role.SENIOR)
                 .build();
 
         bidder1 = User.builder()
                 .name("Junior Bidder 1")
                 .email("bidder1@campus.edu")
                 .passwordHash("hashed")
+                .role(Role.JUNIOR)
                 .build();
 
         bidder2 = User.builder()
                 .name("Junior Bidder 2")
                 .email("bidder2@campus.edu")
                 .passwordHash("hashed")
+                .role(Role.JUNIOR)
                 .build();
 
         openAuction = Listing.builder()

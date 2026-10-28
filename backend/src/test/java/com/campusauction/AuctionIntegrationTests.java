@@ -9,6 +9,7 @@ import com.campusauction.bid.dto.PlaceBidRequest;
 import com.campusauction.common.enums.ItemCondition;
 import com.campusauction.common.enums.ListingCategory;
 import com.campusauction.common.enums.ListingStatus;
+import com.campusauction.common.enums.Role;
 import com.campusauction.common.exception.ForbiddenException;
 import com.campusauction.common.exception.InvalidBidException;
 import com.campusauction.handover.HandoverService;
@@ -60,30 +61,51 @@ class AuctionIntegrationTests {
                 .name("Alex Senior")
                 .email("alex_senior@campus.edu")
                 .password("password123")
+                .role(Role.SENIOR)
                 .studentId("SEN-2024-001")
                 .build());
         assertNotNull(sellerAuth.getToken());
         User seller = userRepository.findById(sellerAuth.getUser().getId()).orElseThrow();
+        assertEquals(Role.SENIOR, seller.getRole());
 
         // 2. Register Bidder 1 (Junior)
         AuthResponse bidder1Auth = authService.register(RegisterRequest.builder()
                 .name("Sam Junior")
                 .email("sam_junior@campus.edu")
                 .password("password123")
+                .role(Role.JUNIOR)
                 .studentId("JUN-2026-089")
                 .build());
         User bidder1 = userRepository.findById(bidder1Auth.getUser().getId()).orElseThrow();
+        assertEquals(Role.JUNIOR, bidder1.getRole());
 
-        // 3. Register Bidder 2
+        // 3. Register Bidder 2 (Junior)
         AuthResponse bidder2Auth = authService.register(RegisterRequest.builder()
                 .name("Taylor Sophomore")
                 .email("taylor@campus.edu")
                 .password("password123")
+                .role(Role.JUNIOR)
                 .studentId("SOP-2025-112")
                 .build());
         User bidder2 = userRepository.findById(bidder2Auth.getUser().getId()).orElseThrow();
+        assertEquals(Role.JUNIOR, bidder2.getRole());
 
-        // 4. Create Listing (Starting Price $100.00, Min Increment $10.00)
+        // Test Junior Role Restriction: Junior cannot create listings
+        CreateListingRequest invalidJuniorReq = CreateListingRequest.builder()
+                .title("Unauthorized Junior Listing")
+                .category(ListingCategory.CYCLE)
+                .condition(ItemCondition.GOOD)
+                .description("Should fail")
+                .startingPrice(new BigDecimal("100.00"))
+                .minimumBidIncrement(new BigDecimal("10.00"))
+                .closingAt(OffsetDateTime.now().plusDays(3))
+                .imageUrls(List.of("/uploads/cycle1.jpg"))
+                .build();
+        assertThrows(ForbiddenException.class, () -> {
+            listingService.createListing(invalidJuniorReq, bidder1);
+        });
+
+        // 4. Create Listing as Senior (Starting Price 100.00, Min Increment 10.00)
         CreateListingRequest createReq = CreateListingRequest.builder()
                 .title("Roadster Cycle 21-Speed")
                 .category(ListingCategory.CYCLE)
