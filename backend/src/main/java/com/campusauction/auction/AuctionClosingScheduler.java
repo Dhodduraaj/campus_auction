@@ -37,6 +37,7 @@ public class AuctionClosingScheduler {
     private final AuditService auditService;
     private final SimpMessagingTemplate messagingTemplate;
     private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
+    private final com.campusauction.bid.AutoBidService autoBidService;
 
     // Run every 5 seconds to promptly close expired auctions
     @Scheduled(fixedDelay = 5000)
@@ -97,6 +98,7 @@ public class AuctionClosingScheduler {
             );
 
             auditService.recordEvent(listing, null, "AUCTION_CLOSED_UNSOLD", "Closed with no accepted bids.");
+            autoBidService.onAuctionClosed(listing, null);
             log.info("Auction {} closed as UNSOLD.", listing.getId());
         } else {
             // AWAITING_SELLER_APPROVAL case
@@ -135,6 +137,7 @@ public class AuctionClosingScheduler {
             );
 
             auditService.recordEvent(listing, provisionalWinner, "AUCTION_CLOSED_PENDING_APPROVAL", "Winning bid: ₹" + winningBid.getAmount());
+            autoBidService.onAuctionClosed(listing, provisionalWinner);
             log.info("Auction {} closed with winning bid ₹{}. Awaiting seller approval.", listing.getId(), winningBid.getAmount());
         }
 

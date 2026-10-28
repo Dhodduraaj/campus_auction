@@ -211,6 +211,7 @@ export interface AiBidConfirmation {
   minimumNextValidBid: number;
   exactBidAmount: number;
   maxAuthorizedAmount: number;
+  isAutoBid?: boolean;
   closingAt: string;
   expiresAt: string;
 }
@@ -220,4 +221,20 @@ export interface AiChatResponse {
   recommendations: ListingCard[];
   bidConfirmation?: AiBidConfirmation;
 }
+
+export type AutoBidStatus = 'ACTIVE' | 'PAUSED' | 'OUTBID' | 'CANCELLED' | 'WON' | 'LOST';
+
+export interface AutoBidRule {
+  id: number;
+  listingId: number;
+  listingTitle: string;
+  maxAmount: number;
+  status: AutoBidStatus;
+  currentHighestBid: number;
+  minimumAcceptableBid: number;
+  isLeading: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 

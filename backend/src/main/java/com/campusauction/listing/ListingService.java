@@ -43,6 +43,7 @@ public class ListingService {
     private final NotificationService notificationService;
     private final AuditService auditService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final com.campusauction.bid.AutoBidService autoBidService;
 
     @Transactional
     public ListingDetailDto createListing(CreateListingRequest request, User seller) {
@@ -248,6 +249,9 @@ public class ListingService {
                 );
             }
         }
+
+        // Cancel any active auto-bid rules
+        autoBidService.onAuctionCancelled(saved);
 
         auditService.recordEvent(saved, currentUser, "LISTING_CANCELLED", "Cancelled reason: " + request.getReason());
 

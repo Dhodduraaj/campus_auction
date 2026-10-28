@@ -38,6 +38,7 @@ public class BiddingService {
     private final NotificationService notificationService;
     private final AuditService auditService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final AutoBidService autoBidService;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public BidDto placeBid(Long listingId, PlaceBidRequest request, User bidder) {
@@ -122,6 +123,9 @@ public class BiddingService {
                 "A new leading bid of ₹" + bidAmount + " was placed on your item '" + listing.getTitle() + "'.",
                 updatedListing
         );
+
+        // Trigger automatic counterbids from active proxy bidders
+        autoBidService.triggerProxyBidsAfterNewBid(updatedListing, bidder);
 
         // 10. Real-time broadcast via WebSocket
         BidDto responseDto = BidDto.fromEntity(savedBid, bidder.getId());

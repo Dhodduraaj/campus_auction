@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { ConversationModal } from '../components/messaging/ConversationModal';
 import { ContactModal } from '../components/handover/ContactModal';
+import { AutoBidPanel } from '../components/auction/AutoBidPanel';
 
 interface ListingDetailPageProps {
   id: number;
@@ -484,10 +485,11 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
                   </p>
                 </div>
               ) : (
-                <form
-                  onSubmit={handleBidSubmit}
-                  className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800"
-                >
+                <div className="space-y-4">
+                  <form
+                    onSubmit={handleBidSubmit}
+                    className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800"
+                  >
                   <div>
                     <div className="flex items-center justify-between text-xs font-mono mb-1.5">
                       <span className="text-slate-500 dark:text-slate-400 font-bold uppercase">
@@ -549,7 +551,17 @@ export const ListingDetailPage: React.FC<ListingDetailPageProps> = ({ id, onNavi
                     <span>{submittingBid ? 'Placing Bid...' : 'Place Bid'}</span>
                   </button>
                 </form>
-              )
+
+                {/* Automatic (Proxy) Bidding Panel */}
+                <AutoBidPanel
+                  listing={listing}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  isSeller={!!isSeller}
+                  onRuleChanged={fetchDetails}
+                />
+              </div>
+            )
             ) : (
               /* Auction concluded */
               <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">

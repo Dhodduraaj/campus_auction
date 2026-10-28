@@ -252,10 +252,10 @@ export const AiAssistantPage: React.FC<AiAssistantPageProps> = ({ onNavigate }) 
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-xs uppercase tracking-wider text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
                       <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                      Explicit Bid Authorization Required
+                      {msg.bidConfirmation.isAutoBid ? 'Automatic Bidding Authorization' : 'Explicit Bid Authorization Required'}
                     </span>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100 font-bold">
-                      ONE-TIME CONFIRMATION
+                      {msg.bidConfirmation.isAutoBid ? 'PROXY BIDDING' : 'ONE-TIME CONFIRMATION'}
                     </span>
                   </div>
 
@@ -271,20 +271,34 @@ export const AiAssistantPage: React.FC<AiAssistantPageProps> = ({ onNavigate }) 
                         </span>
                       </div>
                       <div className="p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase block">Exact Bid to Submit</span>
+                        <span className="text-[10px] text-slate-400 uppercase block">
+                          {msg.bidConfirmation.isAutoBid ? 'Authorized Max Limit' : 'Exact Bid to Submit'}
+                        </span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                          {formatCurrency(msg.bidConfirmation.exactBidAmount)}
+                          {formatCurrency(msg.bidConfirmation.isAutoBid ? msg.bidConfirmation.maxAuthorizedAmount : msg.bidConfirmation.exactBidAmount)}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                      <span>Authorized Maximum: <strong>{formatCurrency(msg.bidConfirmation.maxAuthorizedAmount)}</strong></span>
+                      <span>
+                        {msg.bidConfirmation.isAutoBid ? (
+                          <>Minimum next bid: <strong>{formatCurrency(msg.bidConfirmation.minimumNextValidBid)}</strong></>
+                        ) : (
+                          <>Authorized Maximum: <strong>{formatCurrency(msg.bidConfirmation.maxAuthorizedAmount)}</strong></>
+                        )}
+                      </span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         Expires in 5 minutes
                       </span>
                     </div>
+
+                    {msg.bidConfirmation.isAutoBid && (
+                      <p className="text-[11px] text-indigo-700 dark:text-indigo-300 pt-1 font-sans">
+                        The platform will automatically place the smallest valid bids necessary to keep you leading, up to your maximum of {formatCurrency(msg.bidConfirmation.maxAuthorizedAmount)}.
+                      </p>
+                    )}
                   </div>
 
                   {/* Confirmation Buttons */}
@@ -302,7 +316,11 @@ export const AiAssistantPage: React.FC<AiAssistantPageProps> = ({ onNavigate }) 
                       ) : (
                         <>
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>Confirm Bid ({formatCurrency(msg.bidConfirmation.exactBidAmount)})</span>
+                          <span>
+                            {msg.bidConfirmation.isAutoBid
+                              ? `Confirm & Activate Auto-Bid`
+                              : `Confirm Bid (${formatCurrency(msg.bidConfirmation.exactBidAmount)})`}
+                          </span>
                         </>
                       )}
                     </button>

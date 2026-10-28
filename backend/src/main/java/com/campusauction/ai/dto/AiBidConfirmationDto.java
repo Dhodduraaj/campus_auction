@@ -21,6 +21,7 @@ public class AiBidConfirmationDto {
     private BigDecimal minimumNextValidBid;
     private BigDecimal exactBidAmount;
     private BigDecimal maxAuthorizedAmount;
+    private Boolean isAutoBid;
     private OffsetDateTime closingAt;
     private OffsetDateTime expiresAt;
 }

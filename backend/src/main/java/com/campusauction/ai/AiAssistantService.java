@@ -34,9 +34,11 @@ public class AiAssistantService {
     private final ListingRepository listingRepository;
     private final AiBidAuthorizationRepository authRepository;
     private final BiddingService biddingService;
+    private final com.campusauction.bid.AutoBidService autoBidService;
 
     private static final Pattern BUDGET_PATTERN = Pattern.compile("(?:under|below|up to|budget|max(?:imum)?(?: of)?|at most|for|₹|rs\\.?|inr)?\\s*(?:₹|rs\\.?|inr)?\\s*(\\d{2,6})(?:\\s*(?:rs|inr|rupees|bucks))?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BID_INTENT_PATTERN = Pattern.compile("\\b(bid|place a? bid|bid on|bid for me|auto bid|help me bid)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BID_INTENT_PATTERN = Pattern.compile("\\b(bid|place a? bid|bid on|bid for me|auto bid|automatically bid|proxy bid|help me bid)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AUTO_BID_PATTERN = Pattern.compile("\\b(auto|proxy|automatically)\\b", Pattern.CASE_INSENSITIVE);
 
     @Transactional
     public AiChatResponse chat(AiChatRequest request, User currentUser) {
@@ -81,13 +83,15 @@ public class AiAssistantService {
                             String authToken = UUID.randomUUID().toString().replace("-", "");
                             OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(5);
 
+                            boolean isAutoBid = AUTO_BID_PATTERN.matcher(query).find();
+
                             AiBidAuthorization auth = AiBidAuthorization.builder()
                                     .authToken(authToken)
                                     .user(currentUser)
                                     .listing(targetListing)
                                     .maxAuthorizedAmount(extractedLimit)
                                     .exactBidAmount(nextValidBid)
-                                    .status("PENDING")
+                                    .status(isAutoBid ? "AUTO_BID_PENDING" : "PENDING")
                                     .expiresAt(expiresAt)
                                     .build();
                             authRepository.save(auth);
@@ -104,12 +108,18 @@ public class AiAssistantService {
                                     .minimumNextValidBid(nextValidBid)
                                     .exactBidAmount(nextValidBid)
                                     .maxAuthorizedAmount(extractedLimit)
+                                    .isAutoBid(isAutoBid)
                                     .closingAt(targetListing.getClosingAt())
                                     .expiresAt(expiresAt)
                                     .build();
 
-                            biddingNote = "I have prepared the next valid bid of ₹" + nextValidBid + " for '" + targetListing.getTitle() +
-                                    "' within your maximum budget of ₹" + extractedLimit + ". Please review and confirm your bid below.";
+                            if (isAutoBid) {
+                                biddingNote = "I have prepared an automatic bidding authorization for '" + targetListing.getTitle() +
+                                        "' with your maximum limit of ₹" + extractedLimit + ". The platform will automatically place the minimum valid bids to keep you in the lead up to your limit. Please review and confirm below.";
+                            } else {
+                                biddingNote = "I have prepared the next valid bid of ₹" + nextValidBid + " for '" + targetListing.getTitle() +
+                                        "' within your maximum budget of ₹" + extractedLimit + ". Please review and confirm your bid below.";
+                            }
                         }
                     } else {
                         biddingNote = "To help you bid on '" + targetListing.getTitle() + "', what is your maximum authorized limit in ₹?";
@@ -137,7 +147,7 @@ public class AiAssistantService {
         AiBidAuthorization auth = authRepository.findByAuthToken(request.getAuthToken())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired bid authorization token."));
 
-        if (!"PENDING".equalsIgnoreCase(auth.getStatus())) {
+        if (!"PENDING".equalsIgnoreCase(auth.getStatus()) && !"AUTO_BID_PENDING".equalsIgnoreCase(auth.getStatus())) {
             throw new BadRequestException("This bid authorization has already been processed or cancelled.");
         }
 
@@ -165,6 +175,20 @@ public class AiAssistantService {
             authRepository.save(auth);
             throw new BadRequestException("Auction price has updated. Minimum required bid is now ₹" + currentMinAcceptable +
                     ", which exceeds your authorized limit of ₹" + auth.getMaxAuthorizedAmount() + ".");
+        }
+
+        if ("AUTO_BID_PENDING".equalsIgnoreCase(auth.getStatus())) {
+            autoBidService.activateOrUpdate(listing.getId(), new com.campusauction.bid.dto.ActivateAutoBidRequest(auth.getMaxAuthorizedAmount()), currentUser);
+            auth.setStatus("CONFIRMED");
+            auth.setUsedAt(OffsetDateTime.now());
+            authRepository.save(auth);
+
+            return BidDto.builder()
+                    .amount(listing.getCurrentHighestBid())
+                    .bidderDisplayName(currentUser.getName())
+                    .createdAt(OffsetDateTime.now())
+                    .isLeading(true)
+                    .build();
         }
 
         // Execute bid via the authoritative transactional BiddingService
