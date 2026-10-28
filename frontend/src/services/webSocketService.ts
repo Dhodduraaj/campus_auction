@@ -97,3 +97,9 @@ class WebSocketService {
 }
 
 export const webSocketService = new WebSocketService();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    webSocketService.disconnect();
+  });
+}

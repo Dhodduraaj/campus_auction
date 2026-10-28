@@ -23,6 +23,22 @@ export default defineConfig({
         target: 'http://localhost:8085',
         ws: true,
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
+            if ((err as any)?.code === 'ECONNRESET' || (err as any)?.code === 'EPIPE') {
+              return;
+            }
+            console.warn('[vite ws proxy]', err.message);
+          });
+          proxy.on('proxyReqWs', (_proxyReq, _req, socket) => {
+            socket.on('error', (err) => {
+              if ((err as any)?.code === 'ECONNRESET' || (err as any)?.code === 'EPIPE') {
+                return;
+              }
+              console.warn('[vite ws socket]', err.message);
+            });
+          });
+        },
       }
     }
   }
